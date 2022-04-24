@@ -2,8 +2,6 @@
 import os
 import os.path
 import random
-import time
-from click import command
 import discord
 from dotenv import load_dotenv
 
@@ -15,7 +13,9 @@ client = discord.Client()
 
 # List of commands
 commandlist = ["!help", "!meme", "!meme amount"]
-helpmessage = (f"Here are the commands:\n{commandlist.replace('\'','').replace('[','').replace(']','')}")
+separator = ", "
+commandlist = separator.join(commandlist).replace(',', '\n').replace(" ", "")
+helpmessage = (f"I react to the following commands:\n{commandlist}")
 
 # Count memes for random meme function
 number_of_memes = 0
@@ -43,7 +43,7 @@ async def on_message(message):
 
     elif message.content.lower().replace(" ", "") == "!help":
         await message.channel.send(content=helpmessage)
-        
+
     elif message.content.lower().replace(" ", "") == '!meme':
         meme = random.randint(1, number_of_memes)
         try:
@@ -54,7 +54,7 @@ async def on_message(message):
             except:
                 file = discord.File(f"memes/{meme}.png")
         await message.channel.send(file=file)
-        
+
     elif message.content.lower().replace(" ", "") == '!memeamount':
         await message.channel.send(content=number_of_memes)
 
