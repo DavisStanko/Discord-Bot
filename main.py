@@ -27,10 +27,7 @@ async def on_ready():
         if guild.name == SERVER:
             break
 
-    print(
-        f'{client.user} is connected to the following guilds:\n'
-        f'{guild.name}(id: {guild.id})'
-    )
+    print(f'{client.user} is connected to the following guilds:\n{SERVER}')
 
 
 @client.event  # Send message reply
@@ -48,11 +45,7 @@ async def on_message(message):
                 file = discord.File(f"memes/{meme}.mp4")
             except:
                 file = discord.File(f"memes/{meme}.png")
-        start_time = time.time()
         await message.channel.send(file=file, content="")
-        end_time = time.time()
-        total_time = round(end_time - start_time, 4)
-        await message.channel.send(f"Took {total_time} seconds to send meme.")
 
 
 client.run(TOKEN)
