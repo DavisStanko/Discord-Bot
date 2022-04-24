@@ -36,7 +36,7 @@ async def on_message(message):
     if message.author == client.user:
         return
 
-    if message.content.lower() == '!meme':
+    if message.content.lower().replace(" ", "") == '!meme':
         meme = random.randint(1, number_of_memes)
         try:
             file = discord.File(f"memes/{meme}.gif")
@@ -46,6 +46,9 @@ async def on_message(message):
             except:
                 file = discord.File(f"memes/{meme}.png")
         await message.channel.send(file=file, content="")
+        
+    elif message.content.lower().replace(" ", "") == '!memeamount':
+        await message.channel.send(content=number_of_memes)
 
 
 client.run(TOKEN)
