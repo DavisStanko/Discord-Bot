@@ -1,1 +1,4 @@
 /.env
+/memes/*
+*.mp4
+*.jpg
