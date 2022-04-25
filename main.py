@@ -18,7 +18,7 @@ commandlist = separator.join(commandlist).replace(',', '\n').replace(" ", "")
 helpmessage = (f"I react to the following commands:\n{commandlist}")
 
 # Number of votes to notify the dev
-votes = 3
+votes = 1
 
 # Count memes for random meme function
 number_of_memes = 0
@@ -63,13 +63,9 @@ async def on_message(message):
 
 @client.event # Reaction
 async def on_raw_reaction_add(reaction):
-    if reaction.emoji == "👎":
-        if reaction.message.author == client.user:
-            if reaction.count == votes:
-                await reaction.message.channel.send(content=f"One of my memes has reached {votes} 👎! My developer has been notified")
-    if reaction.emoji == "👍":
-        if reaction.message.author == client.user:
-            if reaction.count == votes:
-                await reaction.message.channel.send(content=f"One of my memes has reached {votes} 👍! My developer has been notified")
+    if reaction.message.author == client.user:
+        if reaction.count == votes:
+            await reaction.message.channel.send(content=f"One of my memes has reached {votes} {reaction.emoji}! My developer has been notified")
+
                 
 client.run(TOKEN)
