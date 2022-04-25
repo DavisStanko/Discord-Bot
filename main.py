@@ -58,5 +58,9 @@ async def on_message(message):
     elif message.content.lower().replace(" ", "") == '!memeamount':
         await message.channel.send(content=number_of_memes)
 
+@client.event # Reaction
+async def on_reaction_add(reaction, user):
+    if reaction.emoji == "👎":
+        await reaction.message.channel.send(content="Deadass?")
 
 client.run(TOKEN)
