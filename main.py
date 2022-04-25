@@ -35,7 +35,7 @@ async def on_ready():
         if guild.name == SERVER:
             break
 
-    print(f'{client.user} is connected to the following guilds:\n{SERVER}')
+    print(f'{client.user} is connected to the following servers:\n{SERVER}')
 
 
 @client.event  # Send message reply
