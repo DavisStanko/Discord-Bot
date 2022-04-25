@@ -36,6 +36,7 @@ for path in os.listdir(dir):
         number_of_spinningObjects += 1
 print(number_of_spinningObjects)
 
+
 @client.event  # Connect to discord
 async def on_ready():
     for guild in client.guilds:
@@ -54,7 +55,7 @@ async def on_message(message):
     elif message.content.lower().replace(" ", "") == "!help":
         await message.channel.send(content=helpmessage)
 
-    elif message.content.lower().replace(" ", "") == "!help":
+    elif message.content.lower().replace(" ", "") == "!info":
         await message.channel.send(content=gitrepo)
 
     elif message.content.lower().replace(" ", "") == '!meme':
@@ -70,7 +71,7 @@ async def on_message(message):
 
     elif message.content.lower().replace(" ", "") == '!memeamount':
         await message.channel.send(content=number_of_memes)
-    
+
     elif message.content.lower().replace(" ", "") == '!object':
         spinningObject = random.randint(1, number_of_spinningObjects)
         file = discord.File(f"spinningObjects/{spinningObject}.gif")
@@ -78,5 +79,5 @@ async def on_message(message):
 
     elif message.content.lower().replace(" ", "") == '!objectamount':
         await message.channel.send(content=number_of_spinningObjects)
-    
+
 client.run(TOKEN)
