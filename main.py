@@ -60,12 +60,5 @@ async def on_message(message):
 
     elif message.content.lower().replace(" ", "") == '!memeamount':
         await message.channel.send(content=number_of_memes)
-
-@client.event # Reaction
-async def on_raw_reaction_add(reaction):
-    if reaction.message.author == client.user:
-        if reaction.count == votes:
-            await reaction.message.channel.send(content=f"One of my memes has reached {votes} {reaction.emoji}! My developer has been notified")
-
                 
 client.run(TOKEN)
