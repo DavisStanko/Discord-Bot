@@ -59,7 +59,7 @@ async def on_message(message):
         await message.channel.send(content=number_of_memes)
 
 @client.event # Reaction
-async def on_reaction_add(reaction, user):
+async def on_reaction_add(reaction, user, message):
     if reaction.emoji == "👎":
         if reaction.message.author == client.user:
             if reaction.count == 5:
@@ -68,4 +68,9 @@ async def on_reaction_add(reaction, user):
         if reaction.message.author == client.user:
             if reaction.count == 5:
                 await reaction.message.channel.send(content="One of my memes has reached 5 👍! My developer has been notified")
+        if reaction.emoji == "😎":
+            if reaction.message.author == client.user:
+                if reaction.count == 1:
+                    await reaction.message.channel.send(content="One of my memes has reached 5 👍! My developer has been notified", reference=message)
+                
 client.run(TOKEN)
