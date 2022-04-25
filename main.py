@@ -12,9 +12,10 @@ SERVER = os.getenv('DISCORD_SERVER')
 client = discord.Client()
 
 # List of commands
-commandlist = ["!help", "!meme", "!meme amount", "!object", "!object amount"]
+# Space in front of first command is intentional
+commandlist = [" !help", "!meme", "!meme amount", "!object", "!object amount"]
 separator = ", "
-commandlist = separator.join(commandlist).replace(',', '\n').replace(" ", "")
+commandlist = separator.join(commandlist).replace(',', '\n')
 helpmessage = (f"I react to the following commands:\n{commandlist}")
 
 # Number of votes to notify the dev
