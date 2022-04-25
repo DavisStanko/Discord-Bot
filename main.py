@@ -13,13 +13,12 @@ client = discord.Client()
 
 # List of commands
 # Space in front of first command is intentional
-commandlist = [" !help", "!meme", "!meme amount", "!object", "!object amount"]
+commandlist = [" !help", "!info", "!meme", "!meme amount", "!object", "!object amount"]
 separator = ", "
 commandlist = separator.join(commandlist).replace(',', '\n')
 helpmessage = (f"I react to the following commands:\n{commandlist}")
 
-# Number of votes to notify the dev
-votes = 1
+gitrepo = "https://github.com/DavisStanko/Discord-Bot"
 
 # Count memes for !meme function
 number_of_memes = 0
@@ -54,6 +53,9 @@ async def on_message(message):
 
     elif message.content.lower().replace(" ", "") == "!help":
         await message.channel.send(content=helpmessage)
+
+    elif message.content.lower().replace(" ", "") == "!help":
+        await message.channel.send(content=gitrepo)
 
     elif message.content.lower().replace(" ", "") == '!meme':
         meme = random.randint(1, number_of_memes)
