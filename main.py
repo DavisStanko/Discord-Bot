@@ -56,6 +56,7 @@ async def on_message(message):
                 file = discord.File(f"memes/{meme}.mp4")
             except:
                 file = discord.File(f"memes/{meme}.png")
+        await message.channel.send(file=file)
 
     elif message.content.lower().replace(" ", "") == '!memeamount':
         await message.channel.send(content=number_of_memes)
