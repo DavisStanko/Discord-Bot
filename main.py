@@ -66,10 +66,10 @@ async def on_raw_reaction_add(reaction):
     if reaction.emoji == "👎":
         if reaction.message.author == client.user:
             if reaction.count == votes:
-                await reaction.message.channel.send(content="One of my memes has reached 5 👎! My developer has been notified")
+                await reaction.message.channel.send(content=f"One of my memes has reached {votes} 👎! My developer has been notified")
     if reaction.emoji == "👍":
         if reaction.message.author == client.user:
             if reaction.count == votes:
-                await reaction.message.channel.send(content="One of my memes has reached 5 👍! My developer has been notified")
+                await reaction.message.channel.send(content=f"One of my memes has reached {votes} 👍! My developer has been notified")
                 
 client.run(TOKEN)
