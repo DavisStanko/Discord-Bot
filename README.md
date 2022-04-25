@@ -22,6 +22,7 @@ I used this [guide](https://www.howtogeek.com/744801/how-to-add-a-bot-to-discord
     - The above guide should help with this.
 3. Add your own files for the bots functions.
     - (eg. The bot's !meme function grabs and sends a random file from the meme folder. There is no meme folder by default, you will need to create this).
+    - Make sure to follow the functions expected naming conventions. As of this documents writing, the meme function expects files to be numbered in ascending order (1, 2, 3) and only works on `.gif` `.mp4` and `.png` files.
     - Try to keep the files small. Discord requires you to have nitro to send large files and it may force users to download the files for viewing instead of having it embedded even if the files successfully sends.
 
 ### Get the files onto the server
