@@ -20,7 +20,7 @@ helpmessage = (f"I react to the following commands:\n{commandlist}")
 # Number of votes to notify the dev
 votes = 1
 
-# Count memes for random meme function
+# Count memes for !meme function
 number_of_memes = 0
 dir = "memes"
 for path in os.listdir(dir):
@@ -28,6 +28,13 @@ for path in os.listdir(dir):
         number_of_memes += 1
 print(number_of_memes)
 
+# Count spinningObjects for !object function
+number_of_spinningObjects = 0
+dir = "spinningObjects"
+for path in os.listdir(dir):
+    if os.path.isfile(os.path.join(dir, path)):
+        number_of_spinningObjects += 1
+print(number_of_spinningObjects)
 
 @client.event  # Connect to discord
 async def on_ready():
@@ -60,5 +67,13 @@ async def on_message(message):
 
     elif message.content.lower().replace(" ", "") == '!memeamount':
         await message.channel.send(content=number_of_memes)
-                
+    
+    elif message.content.lower().replace(" ", "") == '!object':
+        spinningObject = random.randint(1, number_of_spinningObjects)
+        file = discord.File(f"spinningObjects/{spinningObject}.gif")
+        await message.channel.send(file=file)
+
+    elif message.content.lower().replace(" ", "") == '!objectamount':
+        await message.channel.send(content=number_of_spinningObjects)
+    
 client.run(TOKEN)
