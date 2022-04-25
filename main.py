@@ -53,7 +53,7 @@ async def on_message(message):
                 file = discord.File(f"memes/{meme}.mp4")
             except:
                 file = discord.File(f"memes/{meme}.png")
-        await message.channel.send(file=file)
+        await message.channel.send(file=file, content="React with 👍 or 👎 to rate this meme!")
 
     elif message.content.lower().replace(" ", "") == '!memeamount':
         await message.channel.send(content=number_of_memes)
@@ -61,6 +61,11 @@ async def on_message(message):
 @client.event # Reaction
 async def on_reaction_add(reaction, user):
     if reaction.emoji == "👎":
-        await reaction.message.channel.send(content="Deadass?")
-
+        if reaction.message.author == client.user:
+            if reaction.count == 5:
+                await reaction.message.channel.send(content="One of my memes has reached 5 👎! My developer has been notified")
+    if reaction.emoji == "👍":
+        if reaction.message.author == client.user:
+            if reaction.count == 5:
+                await reaction.message.channel.send(content="One of my memes has reached 5 👍! My developer has been notified")
 client.run(TOKEN)
