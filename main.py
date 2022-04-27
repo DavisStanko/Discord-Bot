@@ -16,7 +16,7 @@ client = discord.Client()
 commandlist = [" !help", "!info", "!meme", "!object", "!frog", "!shrigma"]
 separator = ", "
 commandlist = separator.join(commandlist).replace(',', '\n')
-helpmessage = (f"I react to the following commands:\n{commandlist}\nAdd \"amount\" to the end of a command to get the number of files.")
+helpmessage = (f"I react to the following commands:\n{commandlist}\nAdd \"amount\" to the end of a command to get the total number of possible files.")
 
 gitrepo = "https://github.com/DavisStanko/Discord-Bot"
 
