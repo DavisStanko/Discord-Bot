@@ -13,10 +13,10 @@ client = discord.Client()
 
 # List of commands
 # Space in front of first command is intentional
-commandlist = [" !help", "!info", "!meme", "!meme amount", "!object", "!object amount"]
+commandlist = [" !help", "!info", "!meme", "!object", "!frog", "!shrigma"]
 separator = ", "
 commandlist = separator.join(commandlist).replace(',', '\n')
-helpmessage = (f"I react to the following commands:\n{commandlist}")
+helpmessage = (f"I react to the following commands:\n{commandlist}\nAdd \"amount\" to the end of a command to get the number of files.")
 
 gitrepo = "https://github.com/DavisStanko/Discord-Bot"
 
@@ -36,6 +36,21 @@ for path in os.listdir(dir):
         number_of_spinningObjects += 1
 print(number_of_spinningObjects)
 
+# Count frogs for !frog function
+number_of_frogs = 0
+dir = "frogs"
+for path in os.listdir(dir):
+    if os.path.isfile(os.path.join(dir, path)):
+        number_of_frogs += 1
+print(number_of_frogs)
+
+# Count shrigmas for !shrigma function
+number_of_shrigmas = 0
+dir = "shrigma"
+for path in os.listdir(dir):
+    if os.path.isfile(os.path.join(dir, path)):
+        number_of_shrigmas += 1
+print(number_of_shrigmas)
 
 @client.event  # Connect to discord
 async def on_ready():
@@ -79,5 +94,21 @@ async def on_message(message):
 
     elif message.content.lower().replace(" ", "") == '!objectamount':
         await message.channel.send(content=number_of_spinningObjects)
+    
+    elif message.content.lower().replace(" ", "") == '!frog':
+        frog = random.randint(1, number_of_frogs)
+        file = discord.File(f"frogs/{frog}.gif")
+        await message.channel.send(file=file)
+
+    elif message.content.lower().replace(" ", "") == '!frogamount':
+        await message.channel.send(content=number_of_frogs)
+        
+    elif message.content.lower().replace(" ", "") == '!shrigma':
+        shrigma = random.randint(1, number_of_shrigmas)
+        file = discord.File(f"shrigmas/{shrigma}.gif")
+        await message.channel.send(file=file)
+
+    elif message.content.lower().replace(" ", "") == '!shrigmaamount':
+        await message.channel.send(content=number_of_shrigmas)
 
 client.run(TOKEN)
