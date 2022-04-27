@@ -89,7 +89,13 @@ async def on_message(message):
 
     elif message.content.lower().replace(" ", "") == '!object':
         spinningObject = random.randint(1, number_of_spinningObjects)
-        file = discord.File(f"spinningObjects/{spinningObject}.gif")
+        try:
+            file = discord.File(f"spinningObjects/{spinningObject}.gif")
+        except:
+            try:
+                file = discord.File(f"spinningObjects/{spinningObject}.mp4")
+            except:
+                file = discord.File(f"spinningObjects/{spinningObject}.png")
         await message.channel.send(file=file)
 
     elif message.content.lower().replace(" ", "") == '!objectamount':
@@ -97,7 +103,13 @@ async def on_message(message):
     
     elif message.content.lower().replace(" ", "") == '!frog':
         frog = random.randint(1, number_of_frogs)
-        file = discord.File(f"frogs/{frog}.gif")
+        try:
+            file = discord.File(f"frogs/{frog}.gif")
+        except:
+            try:
+                file = discord.File(f"frogs/{frog}.mp4")
+            except:
+                file = discord.File(f"frogs/{frog}.png")
         await message.channel.send(file=file)
 
     elif message.content.lower().replace(" ", "") == '!frogamount':
@@ -105,7 +117,13 @@ async def on_message(message):
         
     elif message.content.lower().replace(" ", "") == '!shrigma':
         shrigma = random.randint(1, number_of_shrigmas)
-        file = discord.File(f"shrigmas/{shrigma}.gif")
+        try:
+            file = discord.File(f"shrigma/{shrigma}.gif")
+        except:
+            try:
+                file = discord.File(f"shrigma/{shrigma}.mp4")
+            except:
+                file = discord.File(f"shrigma/{shrigma}.png")
         await message.channel.send(file=file)
 
     elif message.content.lower().replace(" ", "") == '!shrigmaamount':
