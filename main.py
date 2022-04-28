@@ -14,8 +14,7 @@ client = discord.Client()
 # List of commands
 # Space in front of first command is intentional
 commandlist = [" !help", "!info", "!meme", "!object", "!frog", "!shrigma"]
-separator = ", "
-commandlist = separator.join(commandlist).replace(',', '\n')
+commandlist = ", ".join(commandlist).replace(',', '\n')
 helpmessage = (f"I react to the following commands:\n{commandlist}")
 
 gitrepo = "https://github.com/DavisStanko/Discord-Bot"
