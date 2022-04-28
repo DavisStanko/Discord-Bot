@@ -41,6 +41,14 @@ async def on_message(message):
     elif message.content.lower().replace(" ", "") == "!info":
         await message.channel.send(content=gitrepo)
 
+    elif message.content.lower().replace(" ", "").endswith("amount"):
+        try:
+            request = message.content.lower().replace(" ", "").replace("!", "").replace("amount", "")
+            answer = os.listdir(request)
+            await message.channel.send(content=f"There are {len(answer)} {request}s")
+        except:
+            pass
+
     elif message.content.replace(" ", "").startswith("!"):
         try:
             request = message.content.lower().replace(" ", "").replace("!", "")
