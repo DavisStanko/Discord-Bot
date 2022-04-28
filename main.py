@@ -16,41 +16,10 @@ client = discord.Client()
 commandlist = [" !help", "!info", "!meme", "!object", "!frog", "!shrigma"]
 separator = ", "
 commandlist = separator.join(commandlist).replace(',', '\n')
-helpmessage = (f"I react to the following commands:\n{commandlist}\nAdd \"amount\" to the end of a command to get the total number of possible files.")
+helpmessage = (f"I react to the following commands:\n{commandlist}")
 
 gitrepo = "https://github.com/DavisStanko/Discord-Bot"
 
-# Count memes for !meme function
-number_of_memes = 0
-dir = "memes"
-for path in os.listdir(dir):
-    if os.path.isfile(os.path.join(dir, path)):
-        number_of_memes += 1
-print(number_of_memes)
-
-# Count spinningObjects for !object function
-number_of_spinningObjects = 0
-dir = "spinningObjects"
-for path in os.listdir(dir):
-    if os.path.isfile(os.path.join(dir, path)):
-        number_of_spinningObjects += 1
-print(number_of_spinningObjects)
-
-# Count frogs for !frog function
-number_of_frogs = 0
-dir = "frogs"
-for path in os.listdir(dir):
-    if os.path.isfile(os.path.join(dir, path)):
-        number_of_frogs += 1
-print(number_of_frogs)
-
-# Count shrigmas for !shrigma function
-number_of_shrigmas = 0
-dir = "shrigma"
-for path in os.listdir(dir):
-    if os.path.isfile(os.path.join(dir, path)):
-        number_of_shrigmas += 1
-print(number_of_shrigmas)
 
 @client.event  # Connect to discord
 async def on_ready():
@@ -73,60 +42,12 @@ async def on_message(message):
     elif message.content.lower().replace(" ", "") == "!info":
         await message.channel.send(content=gitrepo)
 
-    elif message.content.lower().replace(" ", "") == '!meme':
-        meme = random.randint(1, number_of_memes)
-        try:
-            file = discord.File(f"memes/{meme}.gif")
-        except:
-            try:
-                file = discord.File(f"memes/{meme}.mp4")
-            except:
-                file = discord.File(f"memes/{meme}.png")
-        await message.channel.send(file=file)
+    elif message.content.lower().replace(" ", "").startswith("!"):
+        print(message.content)
+        attachment = random.choice(os.listdir(message.content.lower().replace(" ", "").replace("!", "")))
+        print(attachment)
+        final = discord.File(f"{message.content.lower().replace('!', '')}/{attachment}")
+        await message.channel.send(file=final)
 
-    elif message.content.lower().replace(" ", "") == '!memeamount':
-        await message.channel.send(content=number_of_memes)
-
-    elif message.content.lower().replace(" ", "") == '!object':
-        spinningObject = random.randint(1, number_of_spinningObjects)
-        try:
-            file = discord.File(f"spinningObjects/{spinningObject}.gif")
-        except:
-            try:
-                file = discord.File(f"spinningObjects/{spinningObject}.mp4")
-            except:
-                file = discord.File(f"spinningObjects/{spinningObject}.png")
-        await message.channel.send(file=file)
-
-    elif message.content.lower().replace(" ", "") == '!objectamount':
-        await message.channel.send(content=number_of_spinningObjects)
-    
-    elif message.content.lower().replace(" ", "") == '!frog':
-        frog = random.randint(1, number_of_frogs)
-        try:
-            file = discord.File(f"frogs/{frog}.gif")
-        except:
-            try:
-                file = discord.File(f"frogs/{frog}.mp4")
-            except:
-                file = discord.File(f"frogs/{frog}.png")
-        await message.channel.send(file=file)
-
-    elif message.content.lower().replace(" ", "") == '!frogamount':
-        await message.channel.send(content=number_of_frogs)
-        
-    elif message.content.lower().replace(" ", "") == '!shrigma':
-        shrigma = random.randint(1, number_of_shrigmas)
-        try:
-            file = discord.File(f"shrigma/{shrigma}.gif")
-        except:
-            try:
-                file = discord.File(f"shrigma/{shrigma}.mp4")
-            except:
-                file = discord.File(f"shrigma/{shrigma}.png")
-        await message.channel.send(file=file)
-
-    elif message.content.lower().replace(" ", "") == '!shrigmaamount':
-        await message.channel.send(content=number_of_shrigmas)
 
 client.run(TOKEN)
