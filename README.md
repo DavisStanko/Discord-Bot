@@ -4,7 +4,7 @@ This bot was made for educational purposes and has no theme. My instance of this
 
 ## Usage
 
-This bots list of commands changes often. To see a complete list, send !help in the discord server.
+This bots list of commands changes often. To see a complete list, send !help in a channel the bot has permission to respond in.
 
 ## Hosting
 
