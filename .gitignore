@@ -1,6 +1,5 @@
 /.env
-/memes/*
-/spinningObjects/*
+
 *.mp4
 *.jpg
 *.gif
