@@ -43,9 +43,7 @@ async def on_message(message):
         await message.channel.send(content=gitrepo)
 
     elif message.content.lower().replace(" ", "").startswith("!"):
-        print(message.content)
         attachment = random.choice(os.listdir(message.content.lower().replace(" ", "").replace("!", "")))
-        print(attachment)
         final = discord.File(f"{message.content.lower().replace('!', '')}/{attachment}")
         await message.channel.send(file=final)
 
