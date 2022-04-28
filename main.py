@@ -42,10 +42,14 @@ async def on_message(message):
     elif message.content.lower().replace(" ", "") == "!info":
         await message.channel.send(content=gitrepo)
 
-    elif message.content.lower().replace(" ", "").startswith("!"):
-        attachment = random.choice(os.listdir(message.content.lower().replace(" ", "").replace("!", "")))
-        final = discord.File(f"{message.content.lower().replace('!', '')}/{attachment}")
-        await message.channel.send(file=final)
-
+    elif message.content.replace(" ", "").startswith("!"):
+        try:
+            request = message.content.lower().replace(" ", "").replace("!", "")
+            attachment = random.choice(os.listdir(request))
+            path = f"{request}/{attachment}"
+            final = discord.File(path)
+            await message.channel.send(file=final)
+        except:
+            pass
 
 client.run(TOKEN)
