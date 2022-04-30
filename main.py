@@ -53,6 +53,12 @@ async def on_message(message):
     elif message.content.lower().replace(" ", "") == "!info":
         await message.channel.send(content=gitrepo)
 
+    #Random song from txt file
+    elif message.content.lower().replace(" ", "").startswith("!song"):
+        lines = open('list.txt').read().splitlines()
+        myline =random.choice(lines)
+        await message.content.channel.send(content=myline)
+
     # Return ammount of files in directory
     elif message.content.lower().replace(" ", "").endswith("amount"):
         try:
