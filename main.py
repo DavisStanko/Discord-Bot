@@ -51,6 +51,15 @@ async def on_message(message):
         except:
             pass
 
+    #deletes a file
+    elif message.content.replace(" ", "").startswith("!delete"):
+        try:
+            request = message.content.lower().replace(" ", "").replace("!delete", "")
+            os.remove(request)
+            await message.channel.send(content=f"Deleted {request}")
+        except:
+            pass
+
     # Last resort, return random file in directory
     elif message.content.replace(" ", "").startswith("!"):
         try:
