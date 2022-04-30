@@ -20,7 +20,15 @@ helpmessage = (f"I react to the following commands:\n{commandlist}\nAdd \"amount
 
 gitrepo = "https://github.com/DavisStanko/Discord-Bot"
 
-songList = open('list.txt').read().splitlines()
+songhelpmessage = ("Add a playlist to the end of the !song command to get a random song from that playlist.\nPlaylists include:\nchill\ncountry\nheavy\nlight\npop\nrap")
+
+#Split songs
+chill = open('chill.txt').read().splitlines()
+country = open('countries.txt').read().splitlines()
+heavy = open('heavy.txt').read().splitlines()
+light = open('light.txt').read().splitlines()
+pop = open('pop.txt').read().splitlines()
+rap = open('rap.txt').read().splitlines()
 
 @client.event  # Connect to discord
 async def on_ready():
@@ -58,9 +66,21 @@ async def on_message(message):
         await message.channel.send(content='test')
 
     #Random song from txt file
-    elif message.content.lower().replace(" ", "") == "!song":
-        myline =random.choice(songList)
-        await message.channel.send(content=myline)
+    elif message.content.replace(" ", "").startswith("!song"):
+        if message.content.lower().replace(" ", "") == "!song":
+            await message.channel.send(content=songhelpmessage)
+        elif message.content.lower().replace(" ", "") == "!songchill":
+            await message.channel.send(content=random.choice(chill))
+        elif message.content.lower().replace(" ", "") == "!songcountry":
+            await message.channel.send(content=random.choice(country))
+        elif message.content.lower().replace(" ", "") == "!songheavy":
+            await message.channel.send(content=random.choice(heavy))
+        elif message.content.lower().replace(" ", "") == "!songlight":
+            await message .channel.send(content=random.choice(light))
+        elif message.content.lower().replace(" ", "") == "!songpop":
+            await message.channel.send(content=random.choice(pop))
+        elif message.content.lower().replace(" ", "") == "!songrap":
+            await message.channel.send(content=random.choice(rap))  
 
     # Return ammount of files in directory
     elif message.content.lower().replace(" ", "").endswith("amount"):
