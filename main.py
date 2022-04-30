@@ -13,7 +13,7 @@ client = discord.Client()
 
 # List of commands
 # Space in front of first command is intentional
-commandlist = [" !help", "!info", "!meme", "!object", "!frog", "!shrigma"]
+commandlist = [" !help", "!info", "!meme", "!object", "!frog", "!shrigma", "!chill"]
 commandlist = ", ".join(commandlist).replace(',', '\n')
 helpmessage = (f"I react to the following commands:\n{commandlist}\nAdd \"amount\" to the end of an applicable command to get the total number of possible files.")
 
@@ -22,6 +22,7 @@ gitrepo = "https://github.com/DavisStanko/Discord-Bot"
 
 @client.event  # Connect to discord
 async def on_ready():
+    #connects to servers from .env
     for guild in client.guilds:
         if guild.name == SERVER:
             break
@@ -41,6 +42,7 @@ async def on_message(message):
     elif message.content.lower().replace(" ", "") == "!info":
         await message.channel.send(content=gitrepo)
 
+    # Return ammount of files in directory
     elif message.content.lower().replace(" ", "").endswith("amount"):
         try:
             request = message.content.lower().replace(" ", "").replace("!", "").replace("amount", "")
@@ -49,6 +51,7 @@ async def on_message(message):
         except:
             pass
 
+    # Last resort, return random file in directory
     elif message.content.replace(" ", "").startswith("!"):
         try:
             request = message.content.lower().replace(" ", "").replace("!", "")
@@ -57,6 +60,7 @@ async def on_message(message):
             final = discord.File(path)
             await message.channel.send(file=final)
         except:
+            #Bad command, maybe meant for a different bot
             pass
 
 client.run(TOKEN)
