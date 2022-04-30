@@ -8,6 +8,7 @@ from dotenv import load_dotenv
 load_dotenv()
 TOKEN = os.getenv('DISCORD_TOKEN')
 SERVER = os.getenv('DISCORD_SERVER')
+ADMIN = os.getenv('DISCORD_ADMIN')
 
 client = discord.Client()
 
@@ -35,6 +36,16 @@ async def on_message(message):
     # If message is from bot, ignore
     if message.author == client.user:
         return
+    
+    #deletes a file
+    if message.author.id == ADMIN:
+        if message.content.replace(" ", "").startswith("!delete"):
+            try:
+                request = message.content.lower().replace(" ", "").replace("!delete", "")
+                os.remove(request)
+                await message.channel.send(content=f"Deleted {request}")
+            except:
+                await message.channel.send(content=f"Could not delete {request}. Format is: !delete command/file.extension")
 
     elif message.content.lower().replace(" ", "") == "!help":
         await message.channel.send(content=helpmessage)
@@ -48,15 +59,6 @@ async def on_message(message):
             request = message.content.lower().replace(" ", "").replace("!", "").replace("amount", "")
             answer = os.listdir(request)
             await message.channel.send(content=f"There are {len(answer)} {request}s")
-        except:
-            pass
-
-    #deletes a file
-    elif message.content.replace(" ", "").startswith("!delete"):
-        try:
-            request = message.content.lower().replace(" ", "").replace("!delete", "")
-            os.remove(request)
-            await message.channel.send(content=f"Deleted {request}")
         except:
             pass
 
