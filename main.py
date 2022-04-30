@@ -20,6 +20,7 @@ helpmessage = (f"I react to the following commands:\n{commandlist}\nAdd \"amount
 
 gitrepo = "https://github.com/DavisStanko/Discord-Bot"
 
+songList = open('list.txt').read().splitlines()
 
 @client.event  # Connect to discord
 async def on_ready():
@@ -53,11 +54,13 @@ async def on_message(message):
     elif message.content.lower().replace(" ", "") == "!info":
         await message.channel.send(content=gitrepo)
 
+    elif message.content.lower().replace(" ", "") == "!test":
+        await message.channel.send(content='test')
+
     #Random song from txt file
-    elif message.content.lower().replace(" ", "").startswith("!song"):
-        lines = open('list.txt').read().splitlines()
-        myline =random.choice(lines)
-        await message.content.channel.send(content=myline)
+    elif message.content.lower().replace(" ", "") == "!song":
+        myline =random.choice(songList)
+        await message.channel.send(content=myline)
 
     # Return ammount of files in directory
     elif message.content.lower().replace(" ", "").endswith("amount"):
