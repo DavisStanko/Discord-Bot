@@ -68,17 +68,17 @@ async def on_message(message):
     #Random song from txt file
     elif message.content.replace(" ", "").startswith("!song"):
         if message.content.lower().replace(" ", "").endswith("amount"):
-            if message.content.lower().replace(" ", "") == "!songchill":
+            if message.content.lower().replace(" ", "") == "!songchillamount":
                 await message.channel.send(chillamount)
-            elif message.content.lower().replace(" ", "") == "!songcountry":
+            elif message.content.lower().replace(" ", "") == "!songcountryamount":
                 await message.channel.send(countryamount)
-            elif message.content.lower().replace(" ", "") == "!songheavy":
+            elif message.content.lower().replace(" ", "") == "!songheavyamount":
                 await message.channel.send(heavyamount)
-            elif message.content.lower().replace(" ", "") == "!songlight":
+            elif message.content.lower().replace(" ", "") == "!songlightamount":
                 await message .channel.send(lightamount)
-            elif message.content.lower().replace(" ", "") == "!songpop":
+            elif message.content.lower().replace(" ", "") == "!songpopamount":
                 await message.channel.send(popamount)
-            elif message.content.lower().replace(" ", "") == "!songrap":
+            elif message.content.lower().replace(" ", "") == "!songrapamount":
                 await message.channel.send(rapamount)
         elif message.content.lower().replace(" ", "") == "!song":
             await message.channel.send(content=songhelpmessage)
