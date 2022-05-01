@@ -23,12 +23,12 @@ gitrepo = "https://github.com/DavisStanko/Discord-Bot"
 songhelpmessage = ("Add a playlist to the end of the !song command to get a random song from that playlist.\nPlaylists include:\nchill\ncountry\nheavy\nlight\npop\nrap")
 
 #Split songs
-chill = open('chill.txt').read().splitlines()
-country = open('countries.txt').read().splitlines()
-heavy = open('heavy.txt').read().splitlines()
-light = open('light.txt').read().splitlines()
-pop = open('pop.txt').read().splitlines()
-rap = open('rap.txt').read().splitlines()
+chill = open('song/chill.txt').read().splitlines()
+country = open('song/countries.txt').read().splitlines()
+heavy = open('song/heavy.txt').read().splitlines()
+light = open('song/light.txt').read().splitlines()
+pop = open('song/pop.txt').read().splitlines()
+rap = open('song/rap.txt').read().splitlines()
 
 @client.event  # Connect to discord
 async def on_ready():
