@@ -68,11 +68,12 @@ async def on_message(message):
     elif request == "!song":
         await message.channel.send(content=songhelpmessage)
 
-    #Random song from txt file
+    #All song commands
     elif request.startswith("!song"):
+        #Get number of songs in playlist
         if request.endswith("amount"):
-            if request == "!songamount":
-                await message.channel.send(f"There are 6 playlists.")
+            if request == "!songamount": #If no playlist is specified
+                await message.channel.send(f"There are 6 playlists.") # Hardcoded for now
             elif request == "!songchillamount":
                 await message.channel.send(f"There are {chillamount} songs in the chill playlist.")
             elif request == "!songcountryamount":
@@ -85,6 +86,7 @@ async def on_message(message):
                 await message.channel.send(f"There are {popamount} songs in the pop playlist.")
             elif request == "!songrapamount":
                 await message.channel.send(f"There are {rapamount} songs in the rap playlist.")
+        # Get random song from playlist
         elif request == "!songchill":
             await message.channel.send(content=random.choice(chill))
         elif request == "!songcountry":
