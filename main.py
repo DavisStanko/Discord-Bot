@@ -26,9 +26,10 @@ commandlist = [" !help", "!info", "!song", "**!meme**", "**!object**", "**!frog*
 commandlist = ", ".join(commandlist).replace(',', '\n')
 helpmessage = (f"I react to the following commands:\n{commandlist}\nAdd \"amount\" to the end of bold commands to get the total number of possible files.")
 
+
 @client.event  # Connect to discord
 async def on_ready():
-    #connects to servers from .env
+    # connects to servers from .env
     for guild in client.guilds:
         if guild.name == SERVER:
             break
@@ -39,57 +40,59 @@ async def on_ready():
 @client.event  # Send message reply
 async def on_message(message):
     request = message.content.lower().replace(' ', '')
-    
+
     # If message is from bot, ignore
     if message.author == client.user:
         return
-    
+
+    # Deletes a file if admin and !delete is used
+    elif message.author.id == ADMIN and request.startswith("!delete"):
+        try:
+            path = request.replace("!delete", "")
+            os.remove(path) # Delete file
+            await message.channel.send(content=f"Deleted {path}") # Send confirmation
+        except:
+            await message.channel.send(content=f"Could not delete {path}. Format is: !delete directory/file.extension") # Send error
+
+    # Send help message
     elif request == "!help":
         await message.channel.send(content=helpmessage)
 
+    # Send info message
     elif request == "!info":
         await message.channel.send(content=gitrepo)
-        
+
+    # Send song help message
     elif request == "!song":
         await message.channel.send(content=songhelpmessage)
 
-    #All song commands
+    # All other song commands
     elif request.startswith("!song"):
-        #Get number of songs in playlist
         if request.endswith("amount"):
-            if request == "!songamount": #If no playlist is specified
-                await message.channel.send(f"There are {len(playlists)} playlists.") # Number of playlists
+            if request == "!songamount":  # If no playlist is specified
+                await message.channel.send(f"There are {len(playlists)} playlists.")  # Number of playlists
             else:
-                request = request.replace("!song", "").replace("amount", "")
-                await message.channel.send(content=len(open(f'song/{request}.txt').read().splitlines()))
-            
+                request = request.replace("!song", "").replace("amount", "")  # Get playlisr name
+                await message.channel.send(content=len(open(f'song/{request}.txt').read().splitlines()))  # Number of songs in playlist
+
         # Get random song from playlist
         else:
-            request = request.replace("!song", "")
-            await message.channel.send(content=random.choice(open(f'song/{request}.txt').read().splitlines()))
+            request = request.replace("!song", "")  # Get playlist name
+            await message.channel.send(content=random.choice(open(f'song/{request}.txt').read().splitlines()))  # Get random song from playlist
 
     # Return ammount of files in directory
     elif request.endswith("amount"):
-        directory = request.replace("amount", "")
-        answer = os.listdir(directory)
-        await message.channel.send(content=f"There are {len(answer)} {request}s")
+        directory = request.replace("amount", "") # Get directory name
+        answer = os.listdir(directory) # Get list of files in directory
+        await message.channel.send(content=f"There are {len(answer)} {request}s") # Number of files
 
     #  Return random file in directory
     elif request.startswith("!"):
-        directory = request.replace("!", "")
-        attachment = random.choice(os.listdir(directory))
-        path = f"{directory}/{attachment}"
-        final = discord.File(path)
-        await message.channel.send(file=final)
-    
-    #Last resort, deletes a file if admin
-    elif message.author.id == ADMIN:
-        if request == ("!delete"):
-            try:
-                request = message.content.lower().replace(" ", "").replace("!delete", "")
-                os.remove(request)
-                await message.channel.send(content=f"Deleted {request}")
-            except:
-                await message.channel.send(content=f"Could not delete {request}. Format is: !delete command/file.extension")
+        directory = request.replace("!", "") # Get directory name
+        attachment = random.choice(os.listdir(directory)) # Get random file in directory
+        path = f"{directory}/{attachment}" # Get path to file
+        final = discord.File(path) # Create file object
+        await message.channel.send(file=final) # Send file
+
 
 client.run(TOKEN)
