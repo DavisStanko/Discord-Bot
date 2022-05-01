@@ -14,9 +14,9 @@ client = discord.Client()
 
 # List of commands
 # Space in front of first command is intentional
-commandlist = [" !help", "!info", "!song", "!meme", "!object", "!frog", "!shrigma", "!chill"]
+commandlist = [" !help", "!info", "!song", "*!meme*", "*!object*", "*!frog*", "*!shrigma*", "*!chill*"]
 commandlist = ", ".join(commandlist).replace(',', '\n')
-helpmessage = (f"I react to the following commands:\n{commandlist}\nAdd \"amount\" to the end of an applicable command to get the total number of possible files.")
+helpmessage = (f"I react to the following commands:\n{commandlist}\nAdd \"amount\" to the end of bold commands to get the total number of possible files.")
 
 gitrepo = "https://github.com/DavisStanko/Discord-Bot"
 
@@ -24,7 +24,7 @@ songhelpmessage = ("Add a playlist to the end of the !song command to get a rand
 
 #Split songs
 chill = open('song/chill.txt').read().splitlines()
-country = open('song/countries.txt').read().splitlines()
+country = open('song/country.txt').read().splitlines()
 heavy = open('song/heavy.txt').read().splitlines()
 light = open('song/light.txt').read().splitlines()
 pop = open('song/pop.txt').read().splitlines()
