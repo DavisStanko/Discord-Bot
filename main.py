@@ -53,60 +53,62 @@ async def on_ready():
 
 @client.event  # Send message reply
 async def on_message(message):
+    request = message.content.lower().replace(' ', '')
+    
     # If message is from bot, ignore
     if message.author == client.user:
         return
     
-    elif message.content.lower().replace(" ", "") == "!help":
+    elif request == "!help":
         await message.channel.send(content=helpmessage)
 
-    elif message.content.lower().replace(" ", "") == "!info":
+    elif request == "!info":
         await message.channel.send(content=gitrepo)
-
-    elif message.content.lower().replace(" ", "") == "!test":
-        await message.channel.send(content='test')
+        
+    elif request == "!song":
+        await message.channel.send(content=songhelpmessage)
 
     #Random song from txt file
-    elif message.content.replace(" ", "").startswith("!song"):
-        if message.content.lower().replace(" ", "").endswith("amount"):
-            if message.content.lower().replace(" ", "") == "!songchillamount":
+    elif request.startswith("!song"):
+        if request.endswith("amount"):
+            if request == "!songamount":
+                await message.channel.send(f"There are 6 playlists.")
+            elif request == "!songchillamount":
                 await message.channel.send(f"There are {chillamount} songs in the chill playlist.")
-            elif message.content.lower().replace(" ", "") == "!songcountryamount":
+            elif request == "!songcountryamount":
                 await message.channel.send(f"There are {countryamount} songs in the country playlist.")
-            elif message.content.lower().replace(" ", "") == "!songheavyamount":
+            elif request == "!songheavyamount":
                 await message.channel.send(f"There are {heavyamount} songs in the heavy playlist.")
-            elif message.content.lower().replace(" ", "") == "!songlightamount":
+            elif request == "!songlightamount":
                 await message .channel.send(f"There are {lightamount} songs in the light playlist.")
-            elif message.content.lower().replace(" ", "") == "!songpopamount":
+            elif request == "!songpopamount":
                 await message.channel.send(f"There are {popamount} songs in the pop playlist.")
-            elif message.content.lower().replace(" ", "") == "!songrapamount":
+            elif request == "!songrapamount":
                 await message.channel.send(f"There are {rapamount} songs in the rap playlist.")
-        elif message.content.lower().replace(" ", "") == "!song":
-            await message.channel.send(content=songhelpmessage)
-        elif message.content.lower().replace(" ", "") == "!songchill":
+        elif request == "!songchill":
             await message.channel.send(content=random.choice(chill))
-        elif message.content.lower().replace(" ", "") == "!songcountry":
+        elif request == "!songcountry":
             await message.channel.send(content=random.choice(country))
-        elif message.content.lower().replace(" ", "") == "!songheavy":
+        elif request == "!songheavy":
             await message.channel.send(content=random.choice(heavy))
-        elif message.content.lower().replace(" ", "") == "!songlight":
+        elif request == "!songlight":
             await message .channel.send(content=random.choice(light))
-        elif message.content.lower().replace(" ", "") == "!songpop":
+        elif request == "!songpop":
             await message.channel.send(content=random.choice(pop))
-        elif message.content.lower().replace(" ", "") == "!songrap":
+        elif request == "!songrap":
             await message.channel.send(content=random.choice(rap))  
 
     # Return ammount of files in directory
-    elif message.content.lower().replace(" ", "").endswith("amount"):
-        request = message.content.lower().replace(" ", "").replace("!", "").replace("amount", "")
-        answer = os.listdir(request)
+    elif request.endswith("amount"):
+        directory = request.replace("amount", "")
+        answer = os.listdir(directory)
         await message.channel.send(content=f"There are {len(answer)} {request}s")
 
     #  Return random file in directory
-    elif message.content.replace(" ", "").startswith("!"):
+    elif request.startswith("!"):
         try:
-            request = message.content.lower().replace(" ", "").replace("!", "")
-            attachment = random.choice(os.listdir(request))
+            directory = request.replace("!", "")
+            attachment = random.choice(os.listdir(directory))
             path = f"{request}/{attachment}"
             final = discord.File(path)
             await message.channel.send(file=final)
@@ -116,7 +118,7 @@ async def on_message(message):
     
     #Last resort, deletes a file if admin
     if message.author.id == ADMIN:
-        if message.content.replace(" ", "").startswith("!delete"):
+        if request == ("!delete"):
             try:
                 request = message.content.lower().replace(" ", "").replace("!delete", "")
                 os.remove(request)
