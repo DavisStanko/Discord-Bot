@@ -71,7 +71,7 @@ async def on_message(message):
     elif request.startswith("!song"):
         if request.endswith("amount"):
             if request == "!songamount":  # If no playlist is specified
-                await message.channel.send(f"There are {len(playlists)} playlists.")  # Number of playlists
+                await message.channel.send("There are 6 playlists.")  # Number of playlists, hardcoded.
             else:
                 request = request.replace("!song", "").replace("amount", "")  # Get playlisr name
                 await message.channel.send(content=len(open(f'song/{request}.txt').read().splitlines()))  # Number of songs in playlist
