@@ -25,14 +25,6 @@ songhelpmessage = (f"Add a playlist to the end of the !song command to get a ran
 
 playlists = ["chill", "country", "heavy", "light", "pop", "rap"]
 
-#Split songs
-chill = open('song/chill.txt').read().splitlines()
-country = open('song/country.txt').read().splitlines()
-heavy = open('song/heavy.txt').read().splitlines()
-light = open('song/light.txt').read().splitlines()
-pop = open('song/pop.txt').read().splitlines()
-rap = open('song/rap.txt').read().splitlines()
-
 chillamount = len(chill)
 countryamount = len(country)
 heavyamount = len(heavy)
@@ -87,18 +79,9 @@ async def on_message(message):
             elif request == "!songrapamount":
                 await message.channel.send(f"There are {rapamount} songs in the rap playlist.")
         # Get random song from playlist
-        elif request == "!songchill":
-            await message.channel.send(content=random.choice(chill))
-        elif request == "!songcountry":
-            await message.channel.send(content=random.choice(country))
-        elif request == "!songheavy":
-            await message.channel.send(content=random.choice(heavy))
-        elif request == "!songlight":
-            await message .channel.send(content=random.choice(light))
-        elif request == "!songpop":
-            await message.channel.send(content=random.choice(pop))
-        elif request == "!songrap":
-            await message.channel.send(content=random.choice(rap))  
+        else:
+            request = request.replace("!song", "")
+            await message.channel.send(content=random.choice(open(f'song/{request}.txt').read().splitlines()))
 
     # Return ammount of files in directory
     elif request.endswith("amount"):
