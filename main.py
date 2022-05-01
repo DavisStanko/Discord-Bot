@@ -9,6 +9,7 @@ load_dotenv()
 TOKEN = os.getenv('DISCORD_TOKEN')
 SERVER = os.getenv('DISCORD_SERVER')
 ADMIN = os.getenv('DISCORD_ADMIN')
+SPOTIFY_PROFILE = os.getenv('SPOTIFY_PROFILE')
 
 client = discord.Client()
 
@@ -20,7 +21,7 @@ helpmessage = (f"I react to the following commands:\n{commandlist}\nAdd \"amount
 
 gitrepo = "https://github.com/DavisStanko/Discord-Bot"
 
-songhelpmessage = ("Add a playlist to the end of the !song command to get a random song from that playlist.\nPlaylists include:\nchill\ncountry\nheavy\nlight\npop\nrap\nAdd \"amount\" after a playlist to get the total number of possible songs.")
+songhelpmessage = (f"Add a playlist to the end of the !song command to get a random song from that playlist.\nPlaylists include:\nchill\ncountry\nheavy\nlight\npop\nrap\nAdd \"amount\" after a playlist to get the total number of possible songs. You can find these playlists on my spotify profile: {SPOTIFY_PROFILE}")
 
 playlists = ["chill", "country", "heavy", "light", "pop", "rap"]
 
@@ -69,17 +70,17 @@ async def on_message(message):
     elif message.content.replace(" ", "").startswith("!song"):
         if message.content.lower().replace(" ", "").endswith("amount"):
             if message.content.lower().replace(" ", "") == "!songchillamount":
-                await message.channel.send(chillamount)
+                await message.channel.send(f"There are {chillamount} songs in the chill playlist.")
             elif message.content.lower().replace(" ", "") == "!songcountryamount":
-                await message.channel.send(countryamount)
+                await message.channel.send(f"There are {countryamount} songs in the country playlist.")
             elif message.content.lower().replace(" ", "") == "!songheavyamount":
-                await message.channel.send(heavyamount)
+                await message.channel.send(f"There are {heavyamount} songs in the heavy playlist.")
             elif message.content.lower().replace(" ", "") == "!songlightamount":
-                await message .channel.send(lightamount)
+                await message .channel.send(f"There are {lightamount} songs in the light playlist.")
             elif message.content.lower().replace(" ", "") == "!songpopamount":
-                await message.channel.send(popamount)
+                await message.channel.send(f"There are {popamount} songs in the pop playlist.")
             elif message.content.lower().replace(" ", "") == "!songrapamount":
-                await message.channel.send(rapamount)
+                await message.channel.send(f"There are {rapamount} songs in the rap playlist.")
         elif message.content.lower().replace(" ", "") == "!song":
             await message.channel.send(content=songhelpmessage)
         elif message.content.lower().replace(" ", "") == "!songchill":
