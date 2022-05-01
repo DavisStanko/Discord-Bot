@@ -21,9 +21,11 @@ helpmessage = (f"I react to the following commands:\n{commandlist}\nAdd \"amount
 
 gitrepo = "https://github.com/DavisStanko/Discord-Bot"
 
-playlists = ["chill", "country", "heavy", "light", "pop", "rap"]
-playlists = ", ".join(playlsits).replace(',', '\n')
-songhelpmessage = (f"Add a playlist to the end of the !song command to get a random song from that playlist.\nPlaylists include:{playlists}\nAdd \"amount\" after a playlist to get the total number of possible songs. You can find these playlists on my spotify profile: {SPOTIFY_PROFILE}")
+# List of playlistss
+# Space in front of first playlists is intentional
+playlists = [" chill", "country", "heavy", "light", "pop", "rap"]
+playlists = ", ".join(playlists).replace(',', '\n')
+songhelpmessage = (f"Add a playlist to the end of the !song command to get a random song from that playlist.\nPlaylists include:\n{playlists}\nAdd \"amount\" after a playlist to get the total number of possible songs. You can find these playlists on my spotify profile: {SPOTIFY_PROFILE}")
 
 playlists = ["chill", "country", "heavy", "light", "pop", "rap"]
 
