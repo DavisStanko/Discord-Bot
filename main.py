@@ -13,12 +13,6 @@ SPOTIFY_PROFILE = os.getenv('SPOTIFY_PROFILE')
 
 client = discord.Client()
 
-# List of commands
-# Space in front of first command is intentional
-commandlist = [" !help", "!info", "!song", "**!meme**", "**!object**", "**!frog**", "**!shrigma**", "**!chill**"]
-commandlist = ", ".join(commandlist).replace(',', '\n')
-helpmessage = (f"I react to the following commands:\n{commandlist}\nAdd \"amount\" to the end of bold commands to get the total number of possible files.")
-
 gitrepo = "https://github.com/DavisStanko/Discord-Bot"
 
 # List of playlistss
@@ -26,6 +20,12 @@ gitrepo = "https://github.com/DavisStanko/Discord-Bot"
 playlists = [" chill", "country", "heavy", "light", "pop", "rap"]
 playlists = ", ".join(playlists).replace(',', '\n')
 songhelpmessage = (f"Add a playlist to the end of the !song command to get a random song from that playlist.\nPlaylists include:\n{playlists}\nAdd \"amount\" after a playlist to get the total number of possible songs. You can find these playlists on my spotify profile: {SPOTIFY_PROFILE}")
+
+# List of commands
+# Space in front of first command is intentional
+commandlist = [" !help", "!info", "!song", "**!meme**", "**!object**", "**!frog**", "**!shrigma**", "**!chill**"]
+commandlist = ", ".join(commandlist).replace(',', '\n')
+helpmessage = (f"I react to the following commands:\n{commandlist}\nAdd \"amount\" to the end of bold commands to get the total number of possible files.")
 
 @client.event  # Connect to discord
 async def on_ready():
