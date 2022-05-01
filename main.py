@@ -14,7 +14,7 @@ client = discord.Client()
 
 # List of commands
 # Space in front of first command is intentional
-commandlist = [" !help", "!info", "!song", "*!meme*", "*!object*", "*!frog*", "*!shrigma*", "*!chill*"]
+commandlist = [" !help", "!info", "!song", "**!meme**", "**!object**", "**!frog**", "**!shrigma**", "**!chill**"]
 commandlist = ", ".join(commandlist).replace(',', '\n')
 helpmessage = (f"I react to the following commands:\n{commandlist}\nAdd \"amount\" to the end of bold commands to get the total number of possible files.")
 
