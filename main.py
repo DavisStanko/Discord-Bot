@@ -96,17 +96,17 @@ async def on_message(message):
     elif message.content.lower().replace(" ", "").endswith("amount"):
         if message.content.lower().replace(" ", "").startswith("!song"):
             if message.content.lower().replace(" ", "") == "!songchill":
-                await message.channel.send(content=random.choice(chillamount))
+                await message.channel.send(chillamount)
             elif message.content.lower().replace(" ", "") == "!songcountry":
-                await message.channel.send(content=random.choice(countryamount))
+                await message.channel.send(countryamount)
             elif message.content.lower().replace(" ", "") == "!songheavy":
-                await message.channel.send(content=random.choice(heavyamount))
+                await message.channel.send(heavyamount)
             elif message.content.lower().replace(" ", "") == "!songlight":
-                await message .channel.send(content=random.choice(lightamount))
+                await message .channel.send(lightamount)
             elif message.content.lower().replace(" ", "") == "!songpop":
-                await message.channel.send(content=random.choice(popamount))
+                await message.channel.send(popamount)
             elif message.content.lower().replace(" ", "") == "!songrap":
-                await message.channel.send(content=random.choice(rapamount))
+                await message.channel.send(rapamount)
         else:   
             request = message.content.lower().replace(" ", "").replace("!", "").replace("amount", "")
             answer = os.listdir(request)
