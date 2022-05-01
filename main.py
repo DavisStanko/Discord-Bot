@@ -17,13 +17,14 @@ gitrepo = "https://github.com/DavisStanko/Discord-Bot"
 # List of playlistss
 # Space in front of first playlists is intentional
 playlists = [" chill", "country", "heavy", "light", "pop", "rap"]
-playlists = ", ".join(playlists).replace(',', '\n')
+playlists = ", ".join(playlists).replace(',', '\n') # Join playlists into one string and format it
 songhelpmessage = (f"Add a playlist to the end of the !song command to get a random song from that playlist.\nPlaylists include:\n{playlists}\nAdd \"amount\" after a playlist to get the total number of possible songs. You can find these playlists on my spotify profile: {SPOTIFY_PROFILE}")
 
 # List of commands
 # Space in front of first command is intentional
+# **!command** means bold
 commandlist = [" !help", "!info", "!song", "**!meme**", "**!object**", "**!frog**", "**!shrigma**", "**!chill**"]
-commandlist = ", ".join(commandlist).replace(',', '\n')
+commandlist = ", ".join(commandlist).replace(',', '\n') # Join commands into one string and format it
 helpmessage = (f"I react to the following commands:\n{commandlist}\nAdd \"amount\" to the end of bold commands to get the total number of possible files.")
 
 
