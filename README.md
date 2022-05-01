@@ -37,7 +37,7 @@ This command changes my directory to where I store the program and then runs the
 
 ### Custom commands
 
-If you modify my program to add more commands be sure to add your new command to the `commandlist` variable. This will automatically update the !help command with your new command.
+If you modify my program to add or remove commands be sure to add your new command to the `commandlist` variable. This will automatically update the !help command with your new command.
 
 ## License
 
