@@ -21,7 +21,9 @@ helpmessage = (f"I react to the following commands:\n{commandlist}\nAdd \"amount
 
 gitrepo = "https://github.com/DavisStanko/Discord-Bot"
 
-songhelpmessage = (f"Add a playlist to the end of the !song command to get a random song from that playlist.\nPlaylists include:\nchill\ncountry\nheavy\nlight\npop\nrap\nAdd \"amount\" after a playlist to get the total number of possible songs. You can find these playlists on my spotify profile: {SPOTIFY_PROFILE}")
+playlists = ["chill", "country", "heavy", "light", "pop", "rap"]
+playlists = ", ".join(playlsits).replace(',', '\n')
+songhelpmessage = (f"Add a playlist to the end of the !song command to get a random song from that playlist.\nPlaylists include:{playlists}\nAdd \"amount\" after a playlist to get the total number of possible songs. You can find these playlists on my spotify profile: {SPOTIFY_PROFILE}")
 
 playlists = ["chill", "country", "heavy", "light", "pop", "rap"]
 
@@ -73,19 +75,11 @@ async def on_message(message):
         #Get number of songs in playlist
         if request.endswith("amount"):
             if request == "!songamount": #If no playlist is specified
-                await message.channel.send(f"There are 6 playlists.") # Hardcoded for now
-            elif request == "!songchillamount":
-                await message.channel.send(f"There are {chillamount} songs in the chill playlist.")
-            elif request == "!songcountryamount":
-                await message.channel.send(f"There are {countryamount} songs in the country playlist.")
-            elif request == "!songheavyamount":
-                await message.channel.send(f"There are {heavyamount} songs in the heavy playlist.")
-            elif request == "!songlightamount":
-                await message .channel.send(f"There are {lightamount} songs in the light playlist.")
-            elif request == "!songpopamount":
-                await message.channel.send(f"There are {popamount} songs in the pop playlist.")
-            elif request == "!songrapamount":
-                await message.channel.send(f"There are {rapamount} songs in the rap playlist.")
+                await message.channel.send(f"There are {len(playlists)} playlists.") # Number of playlists
+            else:
+                request = request.replace("!song", "").replace("amount", "")
+                await message.channel.send(content=len(open(f'song/{request}.txt').read().splitlines()))
+            
         # Get random song from playlist
         else:
             request = request.replace("!song", "")
