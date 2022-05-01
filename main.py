@@ -95,18 +95,14 @@ async def on_message(message):
 
     #  Return random file in directory
     elif request.startswith("!"):
-        try:
-            directory = request.replace("!", "")
-            attachment = random.choice(os.listdir(directory))
-            path = f"{request}/{attachment}"
-            final = discord.File(path)
-            await message.channel.send(file=final)
-        except:
-            #Bad command, maybe meant for a different bot
-            pass
+        directory = request.replace("!", "")
+        attachment = random.choice(os.listdir(directory))
+        path = f"{directory}/{attachment}"
+        final = discord.File(path)
+        await message.channel.send(file=final)
     
     #Last resort, deletes a file if admin
-    if message.author.id == ADMIN:
+    elif message.author.id == ADMIN:
         if request == ("!delete"):
             try:
                 request = message.content.lower().replace(" ", "").replace("!delete", "")
