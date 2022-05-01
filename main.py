@@ -56,16 +56,6 @@ async def on_message(message):
     if message.author == client.user:
         return
     
-    #deletes a file
-    if message.author.id == ADMIN:
-        if message.content.replace(" ", "").startswith("!delete"):
-            try:
-                request = message.content.lower().replace(" ", "").replace("!delete", "")
-                os.remove(request)
-                await message.channel.send(content=f"Deleted {request}")
-            except:
-                await message.channel.send(content=f"Could not delete {request}. Format is: !delete command/file.extension")
-
     elif message.content.lower().replace(" ", "") == "!help":
         await message.channel.send(content=helpmessage)
 
@@ -111,7 +101,7 @@ async def on_message(message):
         answer = os.listdir(request)
         await message.channel.send(content=f"There are {len(answer)} {request}s")
 
-    # Last resort, return random file in directory
+    #  Return random file in directory
     elif message.content.replace(" ", "").startswith("!"):
         try:
             request = message.content.lower().replace(" ", "").replace("!", "")
@@ -122,5 +112,15 @@ async def on_message(message):
         except:
             #Bad command, maybe meant for a different bot
             pass
+    
+    #Last resort, deletes a file if admin
+    if message.author.id == ADMIN:
+        if message.content.replace(" ", "").startswith("!delete"):
+            try:
+                request = message.content.lower().replace(" ", "").replace("!delete", "")
+                os.remove(request)
+                await message.channel.send(content=f"Deleted {request}")
+            except:
+                await message.channel.send(content=f"Could not delete {request}. Format is: !delete command/file.extension")
 
 client.run(TOKEN)
