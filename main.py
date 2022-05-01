@@ -20,7 +20,9 @@ helpmessage = (f"I react to the following commands:\n{commandlist}\nAdd \"amount
 
 gitrepo = "https://github.com/DavisStanko/Discord-Bot"
 
-songhelpmessage = ("Add a playlist to the end of the !song command to get a random song from that playlist.\nPlaylists include:\nchill\ncountry\nheavy\nlight\npop\nrap")
+songhelpmessage = ("Add a playlist to the end of the !song command to get a random song from that playlist.\nPlaylists include:\nchill\ncountry\nheavy\nlight\npop\nrap\nAdd \"amount\" after a playlist to get the total number of possible songs.")
+
+playlists = ["chill", "country", "heavy", "light", "pop", "rap"]
 
 #Split songs
 chill = open('song/chill.txt').read().splitlines()
@@ -29,6 +31,14 @@ heavy = open('song/heavy.txt').read().splitlines()
 light = open('song/light.txt').read().splitlines()
 pop = open('song/pop.txt').read().splitlines()
 rap = open('song/rap.txt').read().splitlines()
+
+chillamount = len(chill)
+countryamount = len(country)
+heavyamount = len(heavy)
+lightamount = len(light)
+popamount = len(pop)
+rapamount = len(rap)
+
 
 @client.event  # Connect to discord
 async def on_ready():
@@ -84,12 +94,23 @@ async def on_message(message):
 
     # Return ammount of files in directory
     elif message.content.lower().replace(" ", "").endswith("amount"):
-        try:
+        if message.content.lower().replace(" ", "").startswith("!song"):
+            if message.content.lower().replace(" ", "") == "!songchill":
+                await message.channel.send(content=random.choice(chillamount))
+            elif message.content.lower().replace(" ", "") == "!songcountry":
+                await message.channel.send(content=random.choice(countryamount))
+            elif message.content.lower().replace(" ", "") == "!songheavy":
+                await message.channel.send(content=random.choice(heavyamount))
+            elif message.content.lower().replace(" ", "") == "!songlight":
+                await message .channel.send(content=random.choice(lightamount))
+            elif message.content.lower().replace(" ", "") == "!songpop":
+                await message.channel.send(content=random.choice(popamount))
+            elif message.content.lower().replace(" ", "") == "!songrap":
+                await message.channel.send(content=random.choice(rapamount))
+        else:   
             request = message.content.lower().replace(" ", "").replace("!", "").replace("amount", "")
             answer = os.listdir(request)
             await message.channel.send(content=f"There are {len(answer)} {request}s")
-        except:
-            pass
 
     # Last resort, return random file in directory
     elif message.content.replace(" ", "").startswith("!"):
