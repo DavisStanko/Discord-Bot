@@ -29,22 +29,6 @@ songhelpmessage = (f"Add a playlist to the end of the !song command to get a ran
 
 playlists = ["chill", "country", "heavy", "light", "pop", "rap"]
 
-#Split songs
-chill = open('song/chill.txt').read().splitlines()
-country = open('song/country.txt').read().splitlines()
-heavy = open('song/heavy.txt').read().splitlines()
-light = open('song/light.txt').read().splitlines()
-pop = open('song/pop.txt').read().splitlines()
-rap = open('song/rap.txt').read().splitlines()
-
-chillamount = len(chill)
-countryamount = len(country)
-heavyamount = len(heavy)
-lightamount = len(light)
-popamount = len(pop)
-rapamount = len(rap)
-
-
 @client.event  # Connect to discord
 async def on_ready():
     #connects to servers from .env
