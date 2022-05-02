@@ -18,7 +18,8 @@ gitrepo = "https://github.com/DavisStanko/Discord-Bot"
 
 # List of playlistss
 # Space in front of first playlists is intentional
-playlists = [" chill", "country", "heavy", "light", "pop", "rap"]
+playlists = [" chill", "country", "heavy", "light", "pop"]
+numberofplaylsits = len(playlists)
 playlists = ", ".join(playlists).replace(',', '\n') # Join playlists into one string and format it
 songhelpmessage = (f"Add a playlist to the end of the !song command to get a random song from that playlist.\nPlaylists include:\n{playlists}\nAdd \"amount\" after a playlist to get the total number of possible songs. You can find these playlists on my spotify profile: {SPOTIFY_PROFILE}")
 
@@ -74,7 +75,7 @@ async def on_message(message):
     elif request.startswith("!song"):
         if request.endswith("amount"):
             if request == "!songamount":  # If no playlist is specified
-                await message.channel.send("There are 6 playlists.")  # Number of playlists, hardcoded.
+                await message.channel.send(f"There are {numberofplaylsits} playlists.")  # Number of playlists, hardcoded.
             else:
                 request = request.replace("!song", "").replace("amount", "")  # Get playlisr name
                 await message.channel.send(content=len(open(f'song/{request}.txt').read().splitlines()))  # Number of songs in playlist
