@@ -9,7 +9,6 @@ TOKEN = os.getenv('DISCORD_TOKEN')
 SERVER = os.getenv('DISCORD_SERVER')
 ADMIN = os.getenv('DISCORD_ADMIN')
 SPOTIFY_PROFILE = os.getenv('SPOTIFY_PROFILE')
-NIC = os.getenv('NIC_PROFILE')
 
 client = discord.Client()
 
@@ -42,7 +41,7 @@ async def on_ready():
 @client.event  # Send message reply
 async def on_message(message):
     request = message.content.lower().replace(' ', '')
-
+    
     # If message is from bot, ignore
     if message.author == client.user:
         return
@@ -63,6 +62,10 @@ async def on_message(message):
     # Send info message
     elif request == "!info":
         await message.channel.send(content=gitrepo)
+
+    # Made for Nic
+    elif request == "!leafs":
+        await message.channel.send(content="Go Leafs Go!")
 
     # Send song help message
     elif request == "!song":
@@ -95,10 +98,6 @@ async def on_message(message):
         path = f"{directory}/{attachment}" # Get path to file
         final = discord.File(path) # Create file object
         await message.channel.send(file=final) # Send file
-        
-    # Made for a freind
-    if message.author == NIC:
-        await message.channel.send(content="Go Leafs Go!")
 
 
 client.run(TOKEN)
