@@ -9,6 +9,8 @@ TOKEN = os.getenv('DISCORD_TOKEN')
 SERVER = os.getenv('DISCORD_SERVER')
 ADMIN = os.getenv('DISCORD_ADMIN')
 SPOTIFY_PROFILE = os.getenv('SPOTIFY_PROFILE')
+NIC = os.getenv('DISCORD_NIC')
+HIDDEN_MESSAGE = os.getenv('HIDDEN_MESSAGE')
 
 client = discord.Client()
 
@@ -45,11 +47,12 @@ async def on_message(message):
     # If message is from bot, ignore
     if message.author == client.user:
         return
-
+           
     # Deletes a file if admin and !delete is used
-    elif message.author.id == ADMIN and request.startswith("!delete"):
+    elif message.author.name == ADMIN and request.startswith("!delete"):
         try:
             path = request.replace("!delete", "")
+            print(path)
             os.remove(path) # Delete file
             await message.channel.send(content=f"Deleted {path}") # Send confirmation
         except:
@@ -98,6 +101,13 @@ async def on_message(message):
         path = f"{directory}/{attachment}" # Get path to file
         final = discord.File(path) # Create file object
         await message.channel.send(file=final) # Send file
+        
+    elif message.author.name == ADMIN:
+        chance = random.randint(1,100)
+        if chance == 1:
+            await message.channel.send(content=HIDDEN_MESSAGE)
+        else:
+            await message.channel.send(content="Go Leafs Go!")
 
 
 client.run(TOKEN)
