@@ -26,7 +26,7 @@ songhelpmessage = (f"Add a playlist to the end of the !song command to get a ran
 # List of commands
 # Space in front of first command is intentional
 # **!command** means bold
-commandlist = [" !help", "!info", "!song", "**!meme**", "**!object**", "**!frog**", "**!shrigma**", "**!chill**"]
+commandlist = [" !help", "!info", "!song", "**!meme**", "**!object**", "**!frog**", "**cat**", "**!shrigma**", "**!chill**"]
 commandlist = ", ".join(commandlist).replace(',', '\n') # Join commands into one string and format it
 helpmessage = (f"I react to the following commands:\n{commandlist}\nAdd \"amount\" to the end of bold commands to get the total number of possible files.")
 
