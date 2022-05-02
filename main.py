@@ -66,10 +66,6 @@ async def on_message(message):
     elif request == "!info":
         await message.channel.send(content=gitrepo)
 
-    # Made for Nic
-    elif request == "!leafs":
-        await message.channel.send(content="Go Leafs Go!")
-
     # Send song help message
     elif request == "!song":
         await message.channel.send(content=songhelpmessage)
@@ -102,7 +98,7 @@ async def on_message(message):
         final = discord.File(path) # Create file object
         await message.channel.send(file=final) # Send file
         
-    elif message.author.name == ADMIN:
+    elif message.author.name == NIC:
         chance = random.randint(1,100)
         if chance == 1:
             await message.channel.send(content=HIDDEN_MESSAGE)
