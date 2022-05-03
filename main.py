@@ -56,7 +56,7 @@ async def on_message(message):
             await message.channel.send(content=HIDDEN_MESSAGE)
         else:
             await message.channel.send(content="Go Leafs Go!")
-        
+      
     # Deletes a file if admin and !delete is used
     if message.author.name == ADMIN and request.startswith("!delete"):
         try:
@@ -111,12 +111,15 @@ async def on_message(message):
     # Final command since trigger message is so broad
     #  Return random file in directory
     if request.startswith("!"):
-        directory = request.replace("!", "") # Get directory name
-        attachment = random.choice(os.listdir(directory)) # Get random file in directory
-        path = f"{directory}/{attachment}" # Get path to file
-        final = discord.File(path) # Create file object
-        await message.channel.send(file=final) # Send file
-        return
+        try:
+            directory = request.replace("!", "") # Get directory name
+            attachment = random.choice(os.listdir(directory)) # Get random file in directory
+            path = f"{directory}/{attachment}" # Get path to file
+            final = discord.File(path) # Create file object
+            await message.channel.send(file=final) # Send file
+            return
+        except FileNotFoundError:
+            pass
 
 
 client.run(TOKEN)
