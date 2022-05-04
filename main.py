@@ -61,18 +61,6 @@ async def on_message(message):
             await message.channel.send(content=HIDDEN_MESSAGE)
         else:
             await message.channel.send(content="Go Leafs Go!")
-      
-    # Deletes a file if admin and !delete is used
-    if message.author.name == ADMIN and request.startswith("!delete"):
-        try:
-            path = request.replace("!delete", "")
-            print(path)
-            os.remove(path) # Delete file
-            await message.channel.send(content=f"Deleted {path}") # Send confirmation
-            return
-        except:
-            await message.channel.send(content=f"Could not delete {path}. Format is: !delete directory/file.extension") # Send error
-            return
 
     # Send help message
     if request == "!help":
