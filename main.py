@@ -16,6 +16,9 @@ client = discord.Client()
 
 gitrepo = "https://github.com/DavisStanko/Discord-Bot"
 
+# Number of reactions needed to trigger a command
+votes = 3
+
 # List of playlistss
 # Space in front of first playlists is intentional
 playlists = [" chill", "country", "heavy", "light", "pop"]
@@ -25,10 +28,10 @@ songhelpmessage = (f"Add a playlist to the end of the !song command to get a ran
 
 # List of commands
 # Space in front of first command is intentional
-# **!command** means bold
-commandlist = [" !help", "!info", "!song", "**!meme**", "**!object**", "**!frog**", "**!cat**", "**!shrigma**", "**!chill**"]
+commandlist = [" !help", "!info", "!song", "!meme", "!object", "!frog", "!cat", "!shrigma", "!chill"]
 commandlist = ", ".join(commandlist).replace(',', '\n') # Join commands into one string and format it
-helpmessage = (f"I react to the following commands:\n{commandlist}\nAdd \"amount\" to the end of bold commands to get the total number of possible files.")
+helpmessage = (f"I react to the following commands:\n{commandlist}\nYou can add \"amount\" to the end of most commands to get the total number of possible outputs.\nDislike a file attachment? If a messagefrom me gets the 👎 reaction {votes} times the attachment will automatically be deleted from my server.")
+
 
 
 @client.event  # Connect to discord
@@ -117,10 +120,22 @@ async def on_message(message):
             attachment = random.choice(os.listdir(directory)) # Get random file in directory
             path = f"{directory}/{attachment}" # Get path to file
             final = discord.File(path) # Create file object
-            await message.channel.send(file=final) # Send file
+            await message.channel.send(content=f"Here is your {directory}!", file=final) # Send file
             return
-        except FileNotFoundError:
+        except FileNotFoundError: # If directory doesn't exist
             pass
 
+@client.event # React to reaction
+async def on_reaction_add(reaction, user): 
+    if str(reaction.emoji) == "👎":
+        if reaction.count == votes:
+            try:
+                directory = reaction.message.content.replace("Here is your ","").replace("!","") # Get directory name
+                attachment = reaction.message.attachments[0].filename # Get file name
+                path = f"{directory}/{attachment}" # Get path to file
+                os.remove(path) # Delete file
+                return
+            except IndexError: # If no file is attached
+                pass
 
 client.run(TOKEN)
