@@ -92,7 +92,8 @@ async def on_message(message):
                 return
             else:
                 request = request.replace("!song", "").replace("amount", "")  # Get playlist name
-                await message.channel.send(content=len(open(f'song/{request}.txt').read().splitlines()))  # Number of songs in playlist
+                answer = len(open(f'song/{request}.txt').read().splitlines())  # Get number of lines in file
+                await message.channel.send(content= f"There are {answer} songs in the {request} playlist")  # Number of songs in playlist
                 return
 
         # Get random song from playlist
@@ -103,9 +104,9 @@ async def on_message(message):
 
     # Return ammount of files in directory
     if request.endswith("amount"):
-        directory = request.replace("amount", "") # Get directory name
+        directory = request.replace("!","").replace("amount", "") # Get directory name
         answer = os.listdir(directory) # Get list of files in directory
-        await message.channel.send(content=f"There are {len(answer)} {request}s") # Number of files
+        await message.channel.send(content=f"There are {len(answer)} {directory}s") # Number of files
         return
 
     # Final command since trigger message is so broad
