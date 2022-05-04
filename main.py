@@ -3,6 +3,7 @@ import os.path
 import random
 import discord
 from dotenv import load_dotenv
+import smtplib, ssl
 
 load_dotenv()
 TOKEN = os.getenv('DISCORD_TOKEN')
@@ -11,6 +12,8 @@ ADMIN = os.getenv('DISCORD_ADMIN')
 SPOTIFY_PROFILE = os.getenv('SPOTIFY_PROFILE')
 NIC = os.getenv('DISCORD_NIC')
 HIDDEN_MESSAGE = os.getenv('HIDDEN_MESSAGE')
+MAIL_USER = os.getenv('GMAIL_USERNAME')
+MAIL_PASS = os.getenv('GMAIL_APP_PASSWORD')
 
 client = discord.Client()
 
@@ -31,7 +34,6 @@ songhelpmessage = (f"Add a playlist to the end of the !song command to get a ran
 commandlist = [" !help", "!info", "!song", "!meme", "!object", "!frog", "!cat", "!shrigma", "!chill"]
 commandlist = ", ".join(commandlist).replace(',', '\n') # Join commands into one string and format it
 helpmessage = (f"I react to the following commands:\n{commandlist}\nYou can add \"amount\" to the end of most commands to get the total number of possible outputs.\nDislike a file attachment? If a message from me gets the 👎 reaction {votes} times, the attachment will automatically be deleted from my server.")
-
 
 
 @client.event  # Connect to discord
@@ -134,6 +136,10 @@ async def on_reaction_add(reaction, user):
                 attachment = reaction.message.attachments[0].filename # Get file name
                 path = f"{directory}/{attachment}" # Get path to file
                 os.remove(path) # Delete file
+                
+                with smtplib.SMTP_SSL("smtp.gmail.com", 465, context=ssl.create_default_context()) as server:
+                    server.login(MAIL_USER, MAIL_PASS)
+                    server.sendmail(MAIL_USER, MAIL_USER, f"{path} was deleted")
                 return
             except IndexError: # If no file is attached
                 pass
