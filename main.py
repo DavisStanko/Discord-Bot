@@ -15,6 +15,9 @@ HIDDEN_MESSAGE = os.getenv('HIDDEN_MESSAGE') # Easter egg
 MAIL_USER = os.getenv('GMAIL_USERNAME')
 MAIL_PASS = os.getenv('GMAIL_APP_PASSWORD') 
 
+# Number of reactions needed to trigger a command
+votes = 2
+
 # List of commands for !help
 # Space in front of first command is intentional for consistent indentaion
 commandlist = [" !help", "!info", "!song", "!meme", "!object", "!frog", "!cat", "!shrigma", "!comfy"]
@@ -29,9 +32,6 @@ playlists = [" chill", "country", "heavy", "light", "pop"]
 numberofplaylsits = len(playlists)
 playlists = ", ".join(playlists).replace(',', '\n') # Join playlists into one string and format it
 songhelpmessage = (f"Add a playlist to the end of the !song command to get a random song from that playlist.\nPlaylists include:\n{playlists}\nAdd \"amount\" after a playlist to get the total number of possible songs. You can find these playlists on my spotify profile: {SPOTIFY_PROFILE}")
-
-# Number of reactions needed to trigger a command
-votes = 2
 
 client = discord.Client()
 
