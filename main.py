@@ -1,40 +1,39 @@
-import os
-import os.path
-import random
+import os, os.path
+import random 
 import discord
-from dotenv import load_dotenv
-import smtplib, ssl
+from dotenv import load_dotenv # Loads the .env file
+import smtplib, ssl # for email
 
 load_dotenv()
-TOKEN = os.getenv('DISCORD_TOKEN')
-SERVER = os.getenv('DISCORD_SERVER')
-ADMIN = os.getenv('DISCORD_ADMIN')
+TOKEN = os.getenv('DISCORD_TOKEN') 
+SERVER = os.getenv('DISCORD_SERVER') # Server ID
+ADMIN = os.getenv('DISCORD_ADMIN') # Admin ID
 SPOTIFY_PROFILE = os.getenv('SPOTIFY_PROFILE')
-NIC = os.getenv('DISCORD_NIC')
-HIDDEN_MESSAGE = os.getenv('HIDDEN_MESSAGE')
+PROFILE_NAME_1 = os.getenv('DISCORD_PROFILE_NAME_1') # Name of my freinds profile
+HIDDEN_MESSAGE = os.getenv('HIDDEN_MESSAGE') # Easter egg
+# Email authentication
 MAIL_USER = os.getenv('GMAIL_USERNAME')
-MAIL_PASS = os.getenv('GMAIL_APP_PASSWORD')
+MAIL_PASS = os.getenv('GMAIL_APP_PASSWORD') 
 
-client = discord.Client()
+# List of commands for !help
+# Space in front of first command is intentional for consistent indentaion
+commandlist = [" !help", "!info", "!song", "!meme", "!object", "!frog", "!cat", "!shrigma", "!comfy"]
+commandlist = ", ".join(commandlist).replace(',', '\n') # Join commands into one string and format it
+helpmessage = (f"I react to the following commands:\n{commandlist}\nYou can add \"amount\" to the end of most commands to get the total number of possible outputs.\nDislike a file attachment? If a message from me gets the 👎 reaction {votes} times, the attachment will automatically be deleted from my server.")
 
 gitrepo = "https://github.com/DavisStanko/Discord-Bot"
 
-# Number of reactions needed to trigger a command
-votes = 3
-
-# List of playlistss
-# Space in front of first playlists is intentional
+# List of playlists for !song
+# Space in front of first playlists is intentional for consistent indentaion
 playlists = [" chill", "country", "heavy", "light", "pop"]
 numberofplaylsits = len(playlists)
 playlists = ", ".join(playlists).replace(',', '\n') # Join playlists into one string and format it
 songhelpmessage = (f"Add a playlist to the end of the !song command to get a random song from that playlist.\nPlaylists include:\n{playlists}\nAdd \"amount\" after a playlist to get the total number of possible songs. You can find these playlists on my spotify profile: {SPOTIFY_PROFILE}")
 
-# List of commands
-# Space in front of first command is intentional
-commandlist = [" !help", "!info", "!song", "!meme", "!object", "!frog", "!cat", "!shrigma", "!comfy"]
-commandlist = ", ".join(commandlist).replace(',', '\n') # Join commands into one string and format it
-helpmessage = (f"I react to the following commands:\n{commandlist}\nYou can add \"amount\" to the end of most commands to get the total number of possible outputs.\nDislike a file attachment? If a message from me gets the 👎 reaction {votes} times, the attachment will automatically be deleted from my server.")
+# Number of reactions needed to trigger a command
+votes = 2
 
+client = discord.Client()
 
 @client.event  # Connect to discord
 async def on_ready():
@@ -42,7 +41,8 @@ async def on_ready():
     for guild in client.guilds:
         if guild.name == SERVER:
             break
-
+    
+    # Prints out infor for debugging
     print(f'{client.user} is connected to the following servers:\n{SERVER}')
 
 
@@ -54,8 +54,8 @@ async def on_message(message):
     if message.author == client.user:
         return
     
-    # No return, so it will continue to the next command.
-    if message.author.name == NIC:
+    # No return, so it will continue to the next command even if this is activated.
+    if message.author.name == PROFILE_NAME_1:
         chance = random.randint(1,100)
         if chance == 1:
             await message.channel.send(content=HIDDEN_MESSAGE)
