@@ -54,6 +54,7 @@ async def on_message(message):
     if message.author == client.user:
         return
     
+    # # Command no longer relevent but may be in the future.
     # # No return, so it will continue to the next command even if this is activated.
     # if message.author.name == PROFILE_NAME_1:
     #     chance = random.randint(1,100)
