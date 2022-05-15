@@ -54,13 +54,13 @@ async def on_message(message):
     if message.author == client.user:
         return
     
-    # No return, so it will continue to the next command even if this is activated.
-    if message.author.name == PROFILE_NAME_1:
-        chance = random.randint(1,100)
-        if chance == 1:
-            await message.channel.send(content=HIDDEN_MESSAGE)
-        else:
-            await message.channel.send(content="Go Leafs Go!")
+    # # No return, so it will continue to the next command even if this is activated.
+    # if message.author.name == PROFILE_NAME_1:
+    #     chance = random.randint(1,100)
+    #     if chance == 1:
+    #         await message.channel.send(content=HIDDEN_MESSAGE)
+    #     else:
+    #         await message.channel.send(content="Go Leafs Go!")
 
     # Send help message
     if request == "!help":
