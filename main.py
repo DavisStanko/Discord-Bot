@@ -96,6 +96,7 @@ async def on_message(message):
             await message.channel.send(content=random.choice(open(f'song/{request}.txt').read().splitlines()))  # Get random song from playlist
             return
 
+    # NEEDS ERROR HANDLING ASAP
     if request.startswith("!d"):
         sides = request.replace("!d", "")
         roll = random.randint(1, int(sides))
