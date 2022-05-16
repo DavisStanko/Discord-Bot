@@ -96,6 +96,11 @@ async def on_message(message):
             await message.channel.send(content=random.choice(open(f'song/{request}.txt').read().splitlines()))  # Get random song from playlist
             return
 
+    if request.startswith("!d"):
+        sides = request.replace("!d", "")
+        roll = random.randint(1, int(sides))
+        await message.channel.send(content=f"You rolled a {roll}")
+
     # Return ammount of files in directory
     if request.endswith("amount"):
         directory = request.replace("!","").replace("amount", "") # Get directory name
