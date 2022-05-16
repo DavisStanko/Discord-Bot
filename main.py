@@ -100,7 +100,11 @@ async def on_message(message):
     if request.endswith("amount"):
         directory = request.replace("!","").replace("amount", "") # Get directory name
         answer = os.listdir(directory) # Get list of files in directory
-        await message.channel.send(content=f"There are {len(answer)} {directory}s") # Number of files
+        if directory.endswith("s"):
+            plural = "s"
+        else:
+            plural = ""
+        await message.channel.send(content=f"There are {len(answer)} {directory}{plural}") # Number of files
         return
 
     # Final command since trigger message is so broad
