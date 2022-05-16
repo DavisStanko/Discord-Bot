@@ -101,9 +101,9 @@ async def on_message(message):
         directory = request.replace("!","").replace("amount", "") # Get directory name
         answer = os.listdir(directory) # Get list of files in directory
         if directory.endswith("s"):
-            plural = "s"
-        else:
             plural = ""
+        else:
+            plural = "s"
         await message.channel.send(content=f"There are {len(answer)} {directory}{plural}") # Number of files
         return
 
