@@ -1,4 +1,4 @@
-import os, os.path
+import os
 import random 
 import discord
 from dotenv import load_dotenv # Loads the .env file
