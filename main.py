@@ -28,7 +28,7 @@ votes = 2
 
 # List of commands for !help
 # Space in front of first command is intentional for consistent indentaion
-commandlist = [" !help", "!info", "!song", "!meme", "!object", "!animal", "!feels", "!literallyme", "!xbuty"]
+commandlist = [" !help", "!info", "!song", "!meme", "!object", "!animal", "!feels", "!literallyme"]
 commandlist = ", ".join(commandlist).replace(',', '\n').replace(' ', '')  # Join commands into one string and format it
 helpmessage = (f"I react to the following commands:\n{commandlist}\nI can also roll dice of any size! Try typing !d20\nYou can add \"amount\" to the end of most commands to get the total number of possible outputs.\nDislike a file attachment? If a message from me gets the 👎 reaction {votes} times, the attachment will automatically be deleted from my server.")
 
