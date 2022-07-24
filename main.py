@@ -99,10 +99,18 @@ async def on_message(message):
             await message.channel.send(content=SIGMA)
             return
 
-    # NEEDS ERROR HANDLING ASAP
+    # Dice roll
     if request.startswith("!d"):
         sides = request.replace("!d", "")
-        roll = random.randint(1, int(sides))
+        # Try to conver to int
+        try:
+            sides = int(sides)
+        except TypeError:
+            pass
+        # Check if negative integer
+        if sides < 1:
+            await message.channel.send(content=f"Please enter a positive number.")
+        roll = random.randint(1, sides)
         await message.channel.send(content=f"You rolled a {roll}")
 
     # Return ammount of files in directory
@@ -116,7 +124,6 @@ async def on_message(message):
         await message.channel.send(content=f"There are {len(answer)} {directory}{plural}")  # Number of files
         return
 
-    # Final command since trigger message is so broad
     #  Return random file in directory
     if request.startswith("!"):
         try:
