@@ -2,7 +2,8 @@ import os, os.path
 import random 
 import discord
 from dotenv import load_dotenv # Loads the .env file
-import smtplib, ssl
+import smtplib
+import ssl
 
 from requests import request # for email
 
@@ -18,9 +19,6 @@ HEAVY = os.getenv('HEAVY')
 LIGHT = os.getenv('LIGHT')
 POP = os.getenv('POP')
 SIGMA = os.getenv('SIGMA')
-# for a friend
-PROFILE_NAME_1 = os.getenv('DISCORD_PROFILE_NAME_1') # Name of my freinds profile
-HIDDEN_MESSAGE = os.getenv('HIDDEN_MESSAGE') # Easter egg
 # Email authentication
 MAIL_USER = os.getenv('GMAIL_USERNAME')
 MAIL_PASS = os.getenv('GMAIL_APP_PASSWORD') 
@@ -64,15 +62,6 @@ async def on_message(message):
     if message.author == client.user:
         return
     
-    # # Command no longer relevent but may be in the future.
-    # # No return, so it will continue to the next command even if this is activated.
-    # if message.author.name == PROFILE_NAME_1:
-    #     chance = random.randint(1,100)
-    #     if chance == 1:
-    #         await message.channel.send(content=HIDDEN_MESSAGE)
-    #     else:
-    #         await message.channel.send(content="Go Leafs Go!")
-
     # Send help message
     if request == "!help":
         await message.channel.send(content=helpmessage)
@@ -108,24 +97,6 @@ async def on_message(message):
         if request.endswith("sigma"):
             await message.channel.send(content=SIGMA)
             return
-
-# Deprecated: I'm too lazy to consistently update the text files nessesary to make this work
-    # if request.startswith("!song"):
-    #     if request.endswith("amount"):
-    #         if request == "!songamount":  # If no playlist is specified
-    #             await message.channel.send(f"There are {numberofplaylsits} playlists.")  # Number of playlists.
-    #             return
-    #         else:
-    #             request = request.replace("!song", "").replace("amount", "")  # Get playlist name
-    #             answer = len(open(f'song/{request}.txt').read().splitlines())  # Get number of lines in file
-    #             await message.channel.send(content= f"There are {answer} songs in the {request} playlist")  # Number of songs in playlist
-    #             return
-
-    #     # Get random song from playlist
-    #     else:
-    #         request = request.replace("!song", "")  # Get playlist name
-    #         await message.channel.send(content=random.choice(open(f'song/{request}.txt').read().splitlines()))  # Get random song from playlist
-    #         return
 
     # NEEDS ERROR HANDLING ASAP
     if request.startswith("!d"):
