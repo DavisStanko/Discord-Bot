@@ -39,7 +39,7 @@ gitrepo = "https://github.com/DavisStanko/Discord-Bot"
 playlists = [" chill", "country", "heavy", "light", "pop", "sigma"]
 numberofplaylsits = len(playlists)
 playlists = ", ".join(playlists).replace(',', '\n')  # Join playlists into one string and format it
-songhelpmessage = (f"Add a playlist to the end of the !song command to get a random song from that playlist.\nPlaylists include:\n{playlists}\n You can also find these playlists on my spotify profile: {SPOTIFY_PROFILE}")
+songhelpmessage = (f"Add a playlist name to the end of the !song command to recieve that playlist's url.\nPlaylists include:\n{playlists}\n You can also find these playlists on my spotify profile: {SPOTIFY_PROFILE}")
 
 client = discord.Client()
 
