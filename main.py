@@ -17,6 +17,7 @@ CHILL = os.getenv('CHILL')
 COUNTRY = os.getenv('COUNTRY')
 HEAVY = os.getenv('HEAVY')
 LIGHT = os.getenv('LIGHT')
+RAP = os.getenv('RAP')
 POP = os.getenv('POP')
 SIGMA = os.getenv('SIGMA')
 # Email authentication
@@ -36,7 +37,7 @@ gitrepo = "https://github.com/DavisStanko/Discord-Bot"
 
 # List of playlists for !song
 # Space in front of first playlists is intentional for consistent indentaion
-playlists = [" chill", "country", "heavy", "light", "pop", "sigma"]
+playlists = [" chill", "country", "heavy", "light", "rap", "pop", "sigma"]
 numberofplaylsits = len(playlists)
 playlists = ", ".join(playlists).replace(',', '\n')  # Join playlists into one string and format it
 songhelpmessage = (f"Add a playlist name to the end of the !song command to recieve that playlist's url.\nPlaylists include:\n{playlists}\n You can also find these playlists on my spotify profile: {SPOTIFY_PROFILE}")
