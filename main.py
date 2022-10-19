@@ -93,6 +93,9 @@ async def on_message(message):
         if request.endswith("light"):
             await message.channel.send(content=LIGHT)
             return
+        if request.endswith("rap"):
+            await message.channel.send(content=RAP)
+            return
         if request.endswith("pop"):
             await message.channel.send(content=POP)
             return
