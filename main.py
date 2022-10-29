@@ -20,6 +20,7 @@ LIGHT = os.getenv('LIGHT')
 RAP = os.getenv('RAP')
 POP = os.getenv('POP')
 SIGMA = os.getenv('SIGMA')
+BOOMER = os.getenv('BOOMER')
 # Email authentication
 MAIL_USER = os.getenv('GMAIL_USERNAME')
 MAIL_PASS = os.getenv('GMAIL_APP_PASSWORD')
@@ -101,6 +102,8 @@ async def on_message(message):
             return
         if request.endswith("sigma"):
             await message.channel.send(content=SIGMA)
+        if request.endswith("boomer"):
+            await message.channel.send(content=BOOMER)
             return
 
     # Dice roll
