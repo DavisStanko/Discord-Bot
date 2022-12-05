@@ -16,9 +16,11 @@ SPOTIFY_PROFILE = os.getenv('SPOTIFY_PROFILE')
 CHILL = os.getenv('CHILL')
 COUNTRY = os.getenv('COUNTRY')
 HEAVY = os.getenv('HEAVY')
+ROCK = os.getenv('ROCK')
 LIGHT = os.getenv('LIGHT')
 RAP = os.getenv('RAP')
 POP = os.getenv('POP')
+HYPERPOP = os.getenv('HYPERPOP')
 SIGMA = os.getenv('SIGMA')
 BOOMER = os.getenv('BOOMER')
 # Email authentication
@@ -38,7 +40,7 @@ gitrepo = "https://github.com/DavisStanko/Discord-Bot"
 
 # List of playlists for !song
 # Space in front of first playlists is intentional for consistent indentaion
-playlists = [" chill", "country", "heavy", "light", "rap", "pop", "sigma", "boomer"]
+playlists = [" chill", "country", "heavy", "rock", "light", "rap", "pop", "hyperpop", "sigma", "boomer"]
 numberofplaylsits = len(playlists)
 playlists = ", ".join(playlists).replace(',', '\n')  # Join playlists into one string and format it
 songhelpmessage = (f"Add a playlist name to the end of the !song command to recieve that playlist's url.\nPlaylists include:\n{playlists}\n You can also find these playlists on my spotify profile: {SPOTIFY_PROFILE}")
@@ -85,24 +87,30 @@ async def on_message(message):
         if request.endswith("chill"):
             await message.channel.send(content=CHILL)
             return
-        if request.endswith("country"):
+        elif request.endswith("country"):
             await message.channel.send(content=COUNTRY)
             return
-        if request.endswith("heavy"):
+        elif request.endswith("heavy"):
             await message.channel.send(content=HEAVY)
             return
-        if request.endswith("light"):
+        elif request.endswith("rock"):
+            await message.channel.send(content=ROCK)
+            return
+        elif request.endswith("light"):
             await message.channel.send(content=LIGHT)
             return
-        if request.endswith("rap"):
+        elif request.endswith("rap"):
             await message.channel.send(content=RAP)
             return
-        if request.endswith("pop"):
+        elif request.endswith("hyperpop"):
+            await message.channel.send(content=HYPERPOP)
+            return
+        elif request.endswith("pop"):
             await message.channel.send(content=POP)
             return
-        if request.endswith("sigma"):
+        elif request.endswith("sigma"):
             await message.channel.send(content=SIGMA)
-        if request.endswith("boomer"):
+        elif request.endswith("boomer"):
             await message.channel.send(content=BOOMER)
             return
 
