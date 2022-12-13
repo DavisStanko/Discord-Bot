@@ -87,9 +87,6 @@ async def on_message(message):
         if request.endswith("chill"):
             await message.channel.send(content=CHILL)
             return
-        elif request.endswith("country"):
-            await message.channel.send(content=COUNTRY)
-            return
         elif request.endswith("heavy"):
             await message.channel.send(content=HEAVY)
             return
@@ -107,6 +104,12 @@ async def on_message(message):
             return
         elif request.endswith("pop"):
             await message.channel.send(content=POP)
+            return
+        elif request.endswith("noise"):
+            await message.channel.send(content=COUNTRY)
+            return
+        elif request.endswith("country"):
+            await message.channel.send(content=COUNTRY)
             return
         elif request.endswith("sigma"):
             await message.channel.send(content=SIGMA)
