@@ -14,13 +14,14 @@ ADMIN = os.getenv('DISCORD_ADMIN')  # Admin ID
 # spotify
 SPOTIFY_PROFILE = os.getenv('SPOTIFY_PROFILE')
 CHILL = os.getenv('CHILL')
-COUNTRY = os.getenv('COUNTRY')
 HEAVY = os.getenv('HEAVY')
 ROCK = os.getenv('ROCK')
 LIGHT = os.getenv('LIGHT')
 RAP = os.getenv('RAP')
 POP = os.getenv('POP')
 HYPERPOP = os.getenv('HYPERPOP')
+NOISE = os.getenv('NOISE')
+COUNTRY = os.getenv('COUNTRY')
 SIGMA = os.getenv('SIGMA')
 BOOMER = os.getenv('BOOMER')
 # Email authentication
@@ -40,7 +41,7 @@ gitrepo = "https://github.com/DavisStanko/Discord-Bot"
 
 # List of playlists for !song
 # Space in front of first playlists is intentional for consistent indentaion
-playlists = [" chill", "country", "heavy", "rock", "light", "rap", "pop", "hyperpop", "sigma", "boomer"]
+playlists = [" chill", "heavy", "rock", "light", "rap", "pop", "hyperpop", "noise", "country", "sigma", "boomer"]
 numberofplaylsits = len(playlists)
 playlists = ", ".join(playlists).replace(',', '\n')  # Join playlists into one string and format it
 songhelpmessage = (f"Add a playlist name to the end of the !song command to recieve that playlist's url.\nPlaylists include:\n{playlists}\n You can also find these playlists on my spotify profile: {SPOTIFY_PROFILE}")
@@ -106,7 +107,7 @@ async def on_message(message):
             await message.channel.send(content=POP)
             return
         elif request.endswith("noise"):
-            await message.channel.send(content=COUNTRY)
+            await message.channel.send(content=NOISE)
             return
         elif request.endswith("country"):
             await message.channel.send(content=COUNTRY)
