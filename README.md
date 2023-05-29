@@ -35,10 +35,6 @@ I use the following command for this on my server but **you will probably need t
  `cd /home/discordbot && nohup python3 main.py &`
 This command changes my directory to where I store the program and then runs the program in the background. To kill the program I use `pkill -f main.py`. **Be sure that there is no other main.py file running in the background** to avoid accidents. You will need to use a more specific command if you are running multiple main.py files.
 
-### Custom commands
-
-If you modify my program to add or remove commands be sure to add your new command to the `commandlist` variable. This will automatically update the !help command with your new command.
-
 ## License
 
 This project is licensed under the [GPL-3.0](LICENSE.md)
