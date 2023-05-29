@@ -2,13 +2,10 @@ import os
 import random
 import discord
 from dotenv import load_dotenv  # Loads the .env file
-import smtplib
-import ssl
-
-from requests import request  # for email
+import re
 
 load_dotenv()
-TOKEN = os.getenv('DISCORD_TOKEN')
+TOKEN = os.getenv('DISCORD_TOKEN') # Bot token
 SERVER = os.getenv('DISCORD_SERVER')  # Server ID
 ADMIN = os.getenv('DISCORD_ADMIN')  # Admin ID
 # spotify
@@ -28,14 +25,10 @@ BOOMER = os.getenv('BOOMER')
 MAIL_USER = os.getenv('GMAIL_USERNAME')
 MAIL_PASS = os.getenv('GMAIL_APP_PASSWORD')
 
-# Number of reactions needed to trigger a command
-votes = 2
+intents = discord.Intents.default()
+intents.message_content = True
 
-# List of commands for !help
-# Space in front of first command is intentional for consistent indentaion
-commandlist = [" !help", "!info", "!song", "!meme", "!object", "!animal", "!feels", "!literallyme", "!motivation"]
-commandlist = ", ".join(commandlist).replace(',', '\n').replace(' ', '')  # Join commands into one string and format it
-helpmessage = (f"I react to the following commands:\n{commandlist}\nI can also roll dice of any size! Try typing !d20\nYou can add \"amount\" to the end of most commands to get the total number of possible outputs.\nDislike a file attachment? If a message from me gets the 👎 reaction {votes} times, the attachment will automatically be deleted from my server.")
+client = discord.Client(intents=intents)
 
 # get a list of all the folders in a directory
 def get_child_folders(path):
