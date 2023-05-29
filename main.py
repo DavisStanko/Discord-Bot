@@ -8,22 +8,6 @@ load_dotenv()
 TOKEN = os.getenv('DISCORD_TOKEN') # Bot token
 SERVER = os.getenv('DISCORD_SERVER')  # Server ID
 ADMIN = os.getenv('DISCORD_ADMIN')  # Admin ID
-# spotify
-SPOTIFY_PROFILE = os.getenv('SPOTIFY_PROFILE')
-CHILL = os.getenv('CHILL')
-HEAVY = os.getenv('HEAVY')
-ROCK = os.getenv('ROCK')
-LIGHT = os.getenv('LIGHT')
-RAP = os.getenv('RAP')
-POP = os.getenv('POP')
-HYPERPOP = os.getenv('HYPERPOP')
-NOISE = os.getenv('NOISE')
-COUNTRY = os.getenv('COUNTRY')
-SIGMA = os.getenv('SIGMA')
-BOOMER = os.getenv('BOOMER')
-# Email authentication
-MAIL_USER = os.getenv('GMAIL_USERNAME')
-MAIL_PASS = os.getenv('GMAIL_APP_PASSWORD')
 
 intents = discord.Intents.default()
 intents.message_content = True
@@ -110,7 +94,7 @@ async def on_message(message):
             reply = f"https://github.com/DavisStanko/Discord-Bot"
             await message.channel.send(reply)
             return
-
+        
         # content
         if request in content_commands:
             # get the path to the folder
@@ -138,9 +122,7 @@ async def on_message(message):
             # send the file
             await message.channel.send(f"here is your {request} song!", file=discord.File(file_path))
             return
-        except FileNotFoundError:  # If directory doesn't exist
-            pass
-
+        
         # utility
         # if request is in NdM format
         if is_valid_dice_format(request):
@@ -155,7 +137,5 @@ async def on_message(message):
             reply = f"you rolled {N}d{M} and got {sum(rolls)} ({rolls})"
             await message.channel.send(reply)
             return
-            except IndexError:  # If no file is attached
-                pass
 
 client.run(TOKEN)
