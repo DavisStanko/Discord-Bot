@@ -21,16 +21,12 @@ def get_child_folders(path):
 # get the media paths
 main_dir = os.path.dirname(os.path.realpath(__file__))
 content_path = os.path.join(main_dir, "internet")
-music_path = os.path.join(main_dir, "music")
 
 # get the command lists
 content_commands = sorted(["!" + command for command in get_child_folders(content_path)])
-music_commands = sorted(["!" + command for command in get_child_folders(music_path)])
 
 # format the command lists
 content_commands = "\n".join([f"`{command}`" for command in content_commands])
-music_commands = "\n".join([f"`{command}`" for command in music_commands])
-
 
 # utility help message
 utility_commands = "`!info` - Links to my GitHub page.\n" \
@@ -70,7 +66,6 @@ async def on_message(message):
             reply = "I can help you with the following commands:\n" \
                     "`!help` - Displays this help message.\n" \
                     "`!content` - Lists content commands.\n" \
-                    "`!music` - Lists music commands.\n" \
                     "`!utility` - Lists utility commands."
             await message.channel.send(reply)
             return
@@ -82,11 +77,6 @@ async def on_message(message):
 
         if request in ["content", "content help"]:
             reply = f"I react to the following content commands by sending a random media file from the specified directory:\n{content_commands}"
-            await message.channel.send(reply)
-            return
-            
-        if request == "music":
-            reply = f"I react to the following music commands by sending a random song from the specified playlist:\n{music_commands}"
             await message.channel.send(reply)
             return
 
@@ -107,20 +97,6 @@ async def on_message(message):
             file_path = os.path.join(folder_path, file)
             # send the file
             await message.channel.send(f"here is your {request}!", file=discord.File(file_path))
-            return
-        
-        # music
-        if request in music_commands:
-            # get the path to the folder
-            folder_path = os.path.join(music_path, request)
-            # get a list of all the files in the folder
-            files = os.listdir(folder_path)
-            # get a random file from the list
-            file = random.choice(files)
-            # get the path to the file
-            file_path = os.path.join(folder_path, file)
-            # send the file
-            await message.channel.send(f"here is your {request} song!", file=discord.File(file_path))
             return
         
         # utility
