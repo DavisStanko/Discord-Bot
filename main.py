@@ -41,15 +41,29 @@ helpmessage = (f"I react to the following commands:\n{commandlist}\nI can also r
 def get_child_folders(path):
     return [entry for entry in os.listdir(path) if os.path.isdir(os.path.join(path, entry))]
 
-# List of playlists for !song
-# Space in front of first playlists is intentional for consistent indentaion
-playlists = [" chill", "heavy", "rock", "light", "rap", "pop", "hyperpop", "noise", "country", "sigma", "boomer"]
-numberofplaylsits = len(playlists)
-playlists = ", ".join(playlists).replace(',', '\n')  # Join playlists into one string and format it
-songhelpmessage = (f"Add a playlist name to the end of the !song command to recieve that playlist's url.\nPlaylists include:\n{playlists}\n You can also find these playlists on my spotify profile: {SPOTIFY_PROFILE}")
+# get the media paths
+main_dir = os.path.dirname(os.path.realpath(__file__))
+content_path = os.path.join(main_dir, "internet")
+music_path = os.path.join(main_dir, "music")
 
-client = discord.Client()
+# get the command lists
+content_commands = sorted(["!" + command for command in get_child_folders(content_path)])
+music_commands = sorted(["!" + command for command in get_child_folders(music_path)])
 
+# format the command lists
+content_commands = "\n".join([f"`{command}`" for command in content_commands])
+music_commands = "\n".join([f"`{command}`" for command in music_commands])
+
+
+# utility help message
+utility_commands = "`!info` - Links to my GitHub page.\n" \
+                    "`!NdM` - Rolls N M-sided dice where N and M are positive integers.\n" \
+
+# check if a string is in NdM format
+def is_valid_dice_format(string):
+    pattern = r"\d+d\d+"
+    match = re.fullmatch(pattern, string)
+    return match is not None
 
 @client.event  # Connect to discord
 async def on_ready():
