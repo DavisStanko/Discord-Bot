@@ -1,7 +1,9 @@
-/.env
-*.mp4
-*.jpg
-*.gif
-*.png
-*.txt
-*.mp3
+.gitignore
+.env
+animal/
+feels/
+femboy/
+literallyme/
+meme/
+motivation/
+object/
