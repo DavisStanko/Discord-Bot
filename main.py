@@ -71,114 +71,90 @@ async def on_ready():
 
 @client.event  # Send message reply
 async def on_message(message):
-    request = message.content.lower().replace(' ', '')
+    request = message.content.lower()
 
     # If message is from bot, ignore
     if message.author == client.user:
         return
 
-    # Send help message
-    if request == "!help":
-        await message.channel.send(content=helpmessage)
-        return
-
-    # Send info message
-    if request == "!info":
-        await message.channel.send(content=gitrepo)
-        return
-
-    # Send song help message
-    if request == "!song":
-        await message.channel.send(content=songhelpmessage)
-        return
-
-    # All other song commands
-    if request.startswith("!song"):
-        if request.endswith("chill"):
-            await message.channel.send(content=CHILL)
+    # If message is a command
+    elif request.startswith('!'):   
+        # remove the ! from the request
+        request = request[1:]
+        
+        if request == "help":
+            reply = "I can help you with the following commands:\n" \
+                    "`!help` - Displays this help message.\n" \
+                    "`!content` - Lists content commands.\n" \
+                    "`!music` - Lists music commands.\n" \
+                    "`!utility` - Lists utility commands."
+            await message.channel.send(reply)
             return
-        elif request.endswith("heavy"):
-            await message.channel.send(content=HEAVY)
-            return
-        elif request.endswith("rock"):
-            await message.channel.send(content=ROCK)
-            return
-        elif request.endswith("light"):
-            await message.channel.send(content=LIGHT)
-            return
-        elif request.endswith("rap"):
-            await message.channel.send(content=RAP)
-            return
-        elif request.endswith("hyperpop"):
-            await message.channel.send(content=HYPERPOP)
-            return
-        elif request.endswith("pop"):
-            await message.channel.send(content=POP)
-            return
-        elif request.endswith("noise"):
-            await message.channel.send(content=NOISE)
-            return
-        elif request.endswith("country"):
-            await message.channel.send(content=COUNTRY)
-            return
-        elif request.endswith("sigma"):
-            await message.channel.send(content=SIGMA)
-        elif request.endswith("boomer"):
-            await message.channel.send(content=BOOMER)
+            
+        if request == "utility":
+            reply = f"I react to the following utility commands:\n{utility_commands}"
+            await message.channel.send(reply)
             return
 
-    # Dice roll
-    if request.startswith("!d"):
-        sides = request.replace("!d", "")
-        # Try to conver to int
-        try:
-            sides = int(sides)
-        except TypeError:
-            pass
-        # Check if negative integer
-        if sides < 1:
-            await message.channel.send(content=f"Please enter a positive number.")
-        roll = random.randint(1, sides)
-        await message.channel.send(content=f"You rolled a {roll}")
+        if request in ["content", "content help"]:
+            reply = f"I react to the following content commands by sending a random media file from the specified directory:\n{content_commands}"
+            await message.channel.send(reply)
+            return
+            
+        if request == "music":
+            reply = f"I react to the following music commands by sending a random song from the specified playlist:\n{music_commands}"
+            await message.channel.send(reply)
+            return
 
-    # Return ammount of files in directory
-    if request.endswith("amount"):
-        directory = request.replace("!", "").replace("amount", "")  # Get directory name
-        answer = os.listdir(directory)  # Get list of files in directory
-        if directory.endswith("s"):
-            plural = ""
-        else:
-            plural = "s"
-        await message.channel.send(content=f"There are {len(answer)} {directory}{plural}")  # Number of files
-        return
+        if request == "info":
+            reply = f"https://github.com/DavisStanko/Discord-Bot"
+            await message.channel.send(reply)
+            return
 
-    #  Return random file in directory
-    if request.startswith("!"):
-        try:
-            directory = request.replace("!", "")  # Get directory name
-            attachment = random.choice(os.listdir(directory))  # Get random file in directory
-            path = f"{directory}/{attachment}"  # Get path to file
-            final = discord.File(path)  # Create file object
-            await message.channel.send(content=f"Here is your {directory}!", file=final)  # Send file
+        # content
+        if request in content_commands:
+            # get the path to the folder
+            folder_path = os.path.join(content_path, request)
+            # get a list of all the files in the folder
+            files = os.listdir(folder_path)
+            # get a random file from the list
+            file = random.choice(files)
+            # get the path to the file
+            file_path = os.path.join(folder_path, file)
+            # send the file
+            await message.channel.send(f"here is your {request}!", file=discord.File(file_path))
+            return
+        
+        # music
+        if request in music_commands:
+            # get the path to the folder
+            folder_path = os.path.join(music_path, request)
+            # get a list of all the files in the folder
+            files = os.listdir(folder_path)
+            # get a random file from the list
+            file = random.choice(files)
+            # get the path to the file
+            file_path = os.path.join(folder_path, file)
+            # send the file
+            await message.channel.send(f"here is your {request} song!", file=discord.File(file_path))
             return
         except FileNotFoundError:  # If directory doesn't exist
             pass
 
-
-@client.event  # React to reaction
-async def on_reaction_add(reaction, user):
-    if str(reaction.emoji) == "👎":
-        if reaction.count == votes:
-            try:
-                directory = reaction.message.content.replace("Here is your ", "").replace("!", "")  # Get directory name
-                attachment = reaction.message.attachments[0].filename  # Get file name
-                path = f"{directory}/{attachment}"  # Get path to file
-                os.remove(path)  # Delete file
-
-                with smtplib.SMTP_SSL("smtp.gmail.com", 465, context=ssl.create_default_context()) as server:
-                    server.login(MAIL_USER, MAIL_PASS)
-                    server.sendmail(MAIL_USER, MAIL_USER, f"{path} was deleted")
-                return
+        # utility
+        # if request is in NdM format
+        if is_valid_dice_format(request):
+            # split the string into N and M
+            N, M = request.split("d")
+            # convert N and M to integers
+            N = int(N)
+            M = int(M)
+            # roll the dice
+            rolls = [random.randint(1, M) for i in range(N)]
+            # format the reply
+            reply = f"you rolled {N}d{M} and got {sum(rolls)} ({rolls})"
+            await message.channel.send(reply)
+            return
             except IndexError:  # If no file is attached
                 pass
 
