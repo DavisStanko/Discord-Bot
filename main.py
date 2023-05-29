@@ -37,7 +37,9 @@ commandlist = [" !help", "!info", "!song", "!meme", "!object", "!animal", "!feel
 commandlist = ", ".join(commandlist).replace(',', '\n').replace(' ', '')  # Join commands into one string and format it
 helpmessage = (f"I react to the following commands:\n{commandlist}\nI can also roll dice of any size! Try typing !d20\nYou can add \"amount\" to the end of most commands to get the total number of possible outputs.\nDislike a file attachment? If a message from me gets the 👎 reaction {votes} times, the attachment will automatically be deleted from my server.")
 
-gitrepo = "https://github.com/DavisStanko/Discord-Bot"
+# get a list of all the folders in a directory
+def get_child_folders(path):
+    return [entry for entry in os.listdir(path) if os.path.isdir(os.path.join(path, entry))]
 
 # List of playlists for !song
 # Space in front of first playlists is intentional for consistent indentaion
