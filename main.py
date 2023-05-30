@@ -122,7 +122,7 @@ async def on_message(message):
             return
 
         # Trivia
-        if request == "trivia":
+        if request == "trivia":            
             question_data = get_random_question()
             question = question_data['question']
             answers = question_data['answers']
@@ -139,9 +139,9 @@ async def on_message(message):
             # Combine the prompt, question, and answers
             reply = question + "\n".join(answers) + "\n" + prompt
 
-            # Send the question
-            await message.channel.send(reply)
-
+            # Send the question and ping the user
+            await message.channel.send(f"{message.author.mention}\n{reply}")
+            
             # Check if the answer is correct
             def check_answer(m):
                 return m.author == message.author and m.channel == message.channel and m.content.strip() in ["1", "2", "3", "4"]
