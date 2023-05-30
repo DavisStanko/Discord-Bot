@@ -144,7 +144,7 @@ async def on_message(message):
 
             # Check if the answer is correct
             def check_answer(m):
-                return m.author == message.author and m.channel == message.channel
+                return m.author == message.author and m.channel == message.channel and m.content.strip() in ["1", "2", "3", "4"]
 
             try:
                 user_response = await client.wait_for('message', check=check_answer, timeout=10.0)
