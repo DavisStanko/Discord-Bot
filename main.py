@@ -3,6 +3,11 @@ import random
 import discord
 from dotenv import load_dotenv  # Loads the .env file
 import re
+import requests
+import json
+import html
+import asyncio
+
 
 load_dotenv()
 TOKEN = os.getenv('DISCORD_TOKEN') # Bot token
@@ -38,6 +43,31 @@ def is_valid_dice_format(string):
     match = re.fullmatch(pattern, string)
     return match is not None
 
+# get a random trivia question
+import requests
+import json
+
+# Function to fetch a random trivia question with its answer from OTDB API
+def get_random_question():
+    url = "https://opentdb.com/api.php?amount=1&type=multiple"
+    response = requests.get(url)
+    data = json.loads(response.text)
+    
+    question = data['results'][0]
+    question_text = html.unescape(question['question'])
+    correct_answer = html.unescape(question['correct_answer'])
+    incorrect_answers = [html.unescape(answer) for answer in question['incorrect_answers']]
+    answers = incorrect_answers + [correct_answer]
+    random.shuffle(answers)
+    
+    question_data = {
+        'question': question_text,
+        'answers': answers,
+        'correct_answer': correct_answer
+    }
+    
+    return question_data
+
 @client.event  # Connect to discord
 async def on_ready():
     # connects to servers from .env
@@ -66,6 +96,7 @@ async def on_message(message):
             reply = "I can help you with the following commands:\n" \
                     "`!help` - Displays this help message.\n" \
                     "`!content` - Lists content commands.\n" \
+                    "`!games` - Lists game commands.\n" \
                     "`!utility` - Lists utility commands."
             await message.channel.send(reply)
             return
@@ -75,8 +106,14 @@ async def on_message(message):
             await message.channel.send(reply)
             return
 
-        if request in ["content", "content help"]:
+        if request in "content":
             reply = f"I react to the following content commands by sending a random media file from the specified directory:\n{content_commands}"
+            await message.channel.send(reply)
+            return
+        
+        if request == "games":
+            reply = f"I react to the following game commands:\n" \
+                    "`!trivia` - Starts a game of trivia."
             await message.channel.send(reply)
             return
 
@@ -84,6 +121,51 @@ async def on_message(message):
             reply = f"https://github.com/DavisStanko/Discord-Bot"
             await message.channel.send(reply)
             return
+        
+        # Trivia
+        if message.content == "!trivia":            
+            question_data = get_random_question()
+            question = question_data['question']
+            answers = question_data['answers']
+            correct_answer = question_data['correct_answer']
+            
+
+            # prompt to answer via number
+            prompt = "Please answer by sending the number of the correct answer within 10 seconds."
+            # replace &quot; with "
+            question = question.replace("&quot;", "\"")
+            # format the question
+            question = f"**{question}**\n"
+            # format the answers
+            answers = [f"{i+1}. {answer}" for i, answer in enumerate(answers)]
+            # combine the prompt question and answers
+            reply = question + "\n".join(answers) + "\n" + prompt     
+            
+            # send the question
+            await message.channel.send(reply)
+            
+            # check if the answer is correct
+            def check_answer(m):
+                return m.author == message.author and m.channel == message.channel
+
+            try:
+                user_response = await client.wait_for('message', check=check_answer, timeout=10.0)
+                user_answer = user_response.content.strip()
+                if user_answer.isdigit():
+                    user_answer = int(user_answer)
+                    if 1 <= user_answer <= len(answers):
+                        selected_answer = answers[user_answer - 1]
+                        if selected_answer.endswith(correct_answer):
+                            await message.channel.send("Correct answer!")
+                        else:
+                            await message.channel.send("Wrong answer! The correct answer is: " + correct_answer)
+                        return
+                await message.channel.send("Invalid answer. The correct answer is: " + correct_answer)
+            except asyncio.TimeoutError:
+                await message.channel.send("Time's up! The correct answer is: " + correct_answer)
+
+            
+
         
         # content
         if request in content_commands:
