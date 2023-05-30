@@ -122,7 +122,7 @@ async def on_message(message):
             return
 
         # Trivia
-        if message.content == "trivia":
+        if request == "trivia":
             question_data = get_random_question()
             question = question_data['question']
             answers = question_data['answers']
