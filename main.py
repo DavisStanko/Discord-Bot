@@ -86,6 +86,10 @@ async def on_message(message):
     elif request.startswith('!'):
         # Remove the '!' from the request
         request = request[1:]
+        # Remove spaces from the request
+        request = request.replace(" ", "")
+        # .lower the request
+        request = request.lower()
 
         if request == "help":
             reply = "I can help you with the following commands:\n" \
