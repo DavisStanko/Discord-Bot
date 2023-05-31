@@ -7,11 +7,13 @@ import requests
 import json
 import html
 import asyncio
+from datetime import datetime
 
 load_dotenv()
 TOKEN = os.getenv('DISCORD_TOKEN')
 SERVER = os.getenv('DISCORD_SERVER')
 ADMIN = os.getenv('DISCORD_ADMIN')
+WEATHER_API_KEY = os.getenv('WEATHER_API_KEY')
 
 intents = discord.Intents.default()
 intents.message_content = True
@@ -31,10 +33,6 @@ content_commands = sorted(["!" + command for command in get_child_folders(conten
 
 # Format the command lists
 content_commands = "\n".join([f"`{command}`" for command in content_commands])
-
-# Utility help message
-utility_commands = "`!info` - Links to my GitHub page.\n" \
-                   "`!NdM` - Rolls N M-sided dice where N and M are positive integers.\n"
 
 # Check if a string is in NdM format
 def is_valid_dice_format(string):
@@ -63,6 +61,86 @@ def get_random_question():
 
     return question_data
 
+# Function to fetch weather data from the API
+def get_coordinates(city):
+    # Get city coordinates
+    geocoding = f"https://api.openweathermap.org/geo/1.0/direct?q={city}&appid={WEATHER_API_KEY}"
+    response = requests.get(geocoding)
+    data = json.loads(response.text)
+    # If no city found, return
+    if len(data) == 0:
+        return None, None
+    # extract coordinates
+    lat = data[0]['lat']
+    lon = data[0]['lon']
+    return lat, lon
+
+def get_weather(lat, lon):
+    # Get weather data    
+    weather = f"https://api.openweathermap.org/data/3.0/onecall?lat={lat}&lon={lon}&appid={WEATHER_API_KEY}&units=metric"
+    response = requests.get(weather)
+    data = json.loads(response.text)
+    return data
+
+# Format weather data into a string
+def info_weather(data):
+    # get lat, lon, timezone, timezone_offset
+    lat = data["lat"]
+    lon = data["lon"]
+    timezone = data["timezone"]
+    timezone_offset = data["timezone_offset"]
+    return f"Latitude: {lat}\nLongitude: {lon}\nTimezone: {timezone}\nTimezone Offset: {timezone_offset}"
+    
+def current_weather(data):
+    # get all current datapoints
+    current_data = data["current"]
+    sunrise = current_data["sunrise"]
+    sunset = current_data["sunset"]
+    temp = current_data["temp"]
+    feels_like = current_data["feels_like"]
+    pressure = current_data["pressure"]
+    humidity = current_data["humidity"]
+    dew_point = current_data["dew_point"]
+    uvi = current_data["uvi"]
+    clouds = current_data["clouds"]
+    visibility = current_data["visibility"]
+    wind_speed = current_data["wind_speed"]
+    wind_deg = current_data["wind_deg"]
+    weather = current_data["weather"][0]["description"]
+    
+    # format sunrise and sunset
+    sunrise = datetime.fromtimestamp(sunrise).strftime("%#I:%M %p")
+    sunset = datetime.fromtimestamp(sunset).strftime("%#I:%M %p")
+
+    return f"\nSunrise: {sunrise}\nSunset: {sunset}\nTemperature: {temp}°C\nFeels Like: {feels_like}°C\nPressure: {pressure} hPa\nHumidity: {humidity}%\nDew Point: {dew_point}°C\nUV Index: {uvi}\nClouds: {clouds}%\nVisibility: {visibility} meters\nWind Speed: {wind_speed} m/s\nWind Direction: {wind_deg}°\nWeather: {weather}"
+    
+def hour_weather(data, hour):
+    reply = ""
+    
+    hours_from_now = data["hourly"][hour]
+    temp = hours_from_now["temp"]
+    feels_like = hours_from_now["feels_like"]
+    pressure = hours_from_now["pressure"]
+    humidity = hours_from_now["humidity"]
+    dew_point = hours_from_now["dew_point"]
+    uvi = hours_from_now["uvi"]
+    clouds = hours_from_now["clouds"]
+    visibility = hours_from_now["visibility"]
+    wind_speed = hours_from_now["wind_speed"]
+    wind_deg = hours_from_now["wind_deg"]
+    wind_gust = hours_from_now["wind_gust"]
+    weather = hours_from_now["weather"][0]["description"]
+
+    reply += f"\nTemperature: {temp}°C\nFeels Like: {feels_like}°C\nPressure: {pressure} hPa\nHumidity: {humidity}%\nDew Point: {dew_point}°C\nUV Index: {uvi}\nClouds: {clouds}%\nVisibility: {visibility} meters\nWind Speed: {wind_speed} m/s\nWind Direction: {wind_deg}°\nWind Gust: {wind_gust} m/s\nWeather: {weather}\n\n"
+    
+    return reply
+        
+    
+def day_weather(data, day):
+    return "Daily data not yet implemented."
+    
+
+
 @client.event
 async def on_ready():
     # Connects to servers from .env
@@ -86,8 +164,6 @@ async def on_message(message):
     elif request.startswith('!'):
         # Remove the '!' from the request
         request = request[1:]
-        # Remove spaces from the request
-        request = request.replace(" ", "")
         # .lower the request
         request = request.lower()
 
@@ -101,7 +177,10 @@ async def on_message(message):
             return
 
         if request == "utility":
-            reply = f"I react to the following utility commands:\n{utility_commands}"
+            reply = f"I react to the following utility commands:\n" \
+                    "`!info` - Links to my GitHub page.\n" \
+                    "`!weather [location] [info|now|hour |day ]` - Displays the weather info in the specified location and time where X is an integer.\n" \
+                    "`!NdM` - Rolls N M-sided dice where N and M are positive integers.\n"
             await message.channel.send(reply)
             return
 
@@ -161,6 +240,76 @@ async def on_message(message):
                 await message.channel.send("Invalid answer. The correct answer is: " + correct_answer)
             except asyncio.TimeoutError:
                 await message.channel.send("Time's up! The correct answer is: " + correct_answer)
+            return
+        
+        # Weather command
+        if request.startswith("weather"):
+            words = request.split()
+
+            try:
+                city = words[1] # Extract the location from the message
+            # If no location is specified
+            except IndexError:
+                await message.channel.send("Please specify a location.")
+                return
+            
+            try:
+                info = words[2]  # Extract the info from the message
+                # check if info is valid
+                if info not in ["info", "current", "minutely", "hour", "day"]:
+                    await message.channel.send("Please specify a valid info type (info, current, hourly, daily).")
+                    return
+            except IndexError:
+                info = "current"
+            
+            # if hour or day is specified check if 0-47 or 0-7
+            if info in ["hour", "day"]:
+                try:
+                    time = int(words[3])
+                    if info == "hour" and (time < 0 or time > 47):
+                        await message.channel.send("Please specify a valid hour (0-47).")
+                        return
+                    elif info == "day" and (time < 0 or time > 7):
+                        await message.channel.send("Please specify a valid day (0-7).")
+                        return
+                except IndexError:
+                    await message.channel.send("Please specify a valid hour (0-47) or day (0-7).")
+                    return
+                except ValueError:
+                    await message.channel.send("Please specify a valid hour (0-47) or day (0-7).")
+                    return
+            
+            lat, lon = get_coordinates(city)
+            # If the city is not found
+            if lat is None or lon is None:
+                await message.channel.send("City not found.")
+                return
+            weather = get_weather(lat, lon)
+            # run function based on info
+            if info == "info":
+                reply = info_weather(weather)
+                reply = f"{city}'s info is:\n{reply}"
+            elif info == "current":
+                reply = current_weather(weather)
+                reply = f"The current weather in {city} is:\n{reply}"
+            elif info == "hour":
+                reply = hour_weather(weather, time)
+                reply = f"In {time} hours the weather in {city} will be:\n{reply}"
+            elif info == "day":
+                reply = day_weather(weather, time)
+                reply = f"In {time} days the weather in {city} will be:\n{reply}"
+            # check if over 2000 characters
+            if len(reply) > 2000:
+                # check how many times 2000 goes into the length
+                num = len(reply) // 2000
+                # split the reply into num parts
+                replies = [reply[i:i+2000] for i in range(0, len(reply), 2000)]
+                # send each part
+                for i in range(num):
+                    await message.channel.send(replies[i])
+                return
+            await message.channel.send(reply)
+            return
 
         # Content
         if request in content_commands:
