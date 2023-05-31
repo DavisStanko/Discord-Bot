@@ -2,6 +2,33 @@ import requests
 import json
 from datetime import datetime
 
+# Parse weather command
+def parse_weather(words):
+    try:
+        city = words[1] # Extract the location from the message
+    # If no location is specified
+    except IndexError:
+        return None, None, None, "Please specify a location."
+    
+    try:
+        info = words[2]  # Extract the info from the message
+        # check if info is valid
+        if info not in ["info", "current", "minutely", "hour", "day"]:
+            return None, None, None, "Please specify a valid info (info, current, minutely, hour, day)."
+    except IndexError:
+        info = "current"
+    
+    # if hour or day is specified check if 0-47 or 0-7
+    if info in ["hour", "day"]:
+        try:
+            time = int(words[3])
+            if info == "hour" and (time < 0 or time > 47):
+                return None, None, None, "Please specify a valid hour (0-47)."
+            elif info == "day" and (time < 0 or time > 7):
+                return None, None, None, "Please specify a valid day (0-7)."
+        except (IndexError, ValueError):
+            return None, None, None, "Please specify a valid time (0-47 for hour, 0-7 for day)."
+
 # Function to fetch weather data from the API
 def get_coordinates(city, WEATHER_API_KEY):
     # Get city coordinates

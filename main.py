@@ -66,11 +66,11 @@ async def on_message(message):
             return
 
         if request == "content":
-            reply = f"I react to the following content commands by sending a random media file from the specified directory:\n{content_commands}"
+            reply = f"I react to the following content commands by sending a random media file from the specified directory:\n{content.get_commands()}"
             await message.channel.send(reply)
             return
 
-        if request == "games":
+        if request == "game":
             reply = f"I react to the following game commands:\n" \
                     "`!trivia` - Starts a game of trivia."
             await message.channel.send(reply)
@@ -83,21 +83,7 @@ async def on_message(message):
 
         # Trivia
         if request == "trivia":            
-            question_data = trivia.get_random_question()
-            question = question_data['question']
-            answers = question_data['answers']
-            correct_answer = question_data['correct_answer']
-
-            # Prompt to answer via number
-            prompt = "Please answer by sending the number of the correct answer within 10 seconds."
-            # Replace &quot; with "
-            question = question.replace("&quot;", "\"")
-            # Format the question
-            question = f"**{question}**\n"
-            # Format the answers
-            answers = [f"{i+1}. {answer}" for i, answer in enumerate(answers)]
-            # Combine the prompt, question, and answers
-            reply = question + "\n".join(answers) + "\n" + prompt
+            answers, correct_answer, reply = trivia.get_random_question()
 
             # Send the question and ping the user
             await message.channel.send(f"{message.author.mention}\n{reply}")
@@ -125,46 +111,23 @@ async def on_message(message):
         
         # Weather command
         if request.startswith("weather"):
+            # Split the request into words and parse it
             words = request.split()
-
-            try:
-                city = words[1] # Extract the location from the message
-            # If no location is specified
-            except IndexError:
-                await message.channel.send("Please specify a location.")
+            city, info, time, error = weather.parse_weather(words)
+            
+            # Check if there was an error
+            if error is not None:
+                await message.channel.send(error)
                 return
             
-            try:
-                info = words[2]  # Extract the info from the message
-                # check if info is valid
-                if info not in ["info", "current", "minutely", "hour", "day"]:
-                    await message.channel.send("Please specify a valid info type (info, current, hourly, daily).")
-                    return
-            except IndexError:
-                info = "current"
-            
-            # if hour or day is specified check if 0-47 or 0-7
-            if info in ["hour", "day"]:
-                try:
-                    time = int(words[3])
-                    if info == "hour" and (time < 0 or time > 47):
-                        await message.channel.send("Please specify a valid hour (0-47).")
-                        return
-                    elif info == "day" and (time < 0 or time > 7):
-                        await message.channel.send("Please specify a valid day (0-7).")
-                        return
-                except IndexError:
-                    await message.channel.send("Please specify a valid hour (0-47) or day (0-7).")
-                    return
-                except ValueError:
-                    await message.channel.send("Please specify a valid hour (0-47) or day (0-7).")
-                    return
-            
+            # Get the coordinates of the city
             lat, lon = weather.get_coordinates(city, WEATHER_API_KEY)
             # If the city is not found
             if lat is None or lon is None:
                 await message.channel.send("City not found.")
                 return
+            
+            # Get the weather data
             weather_data = weather.get_weather(lat, lon, WEATHER_API_KEY)
             # run function based on info
             if info == "info":
@@ -179,6 +142,7 @@ async def on_message(message):
             elif info == "day":
                 reply = weather.day_weather(weather_data, time)
                 reply = f"In {time} days the weather in {city} will be:\n{reply}"
+
             # check if over 2000 characters
             if len(reply) > 2000:
                 # check how many times 2000 goes into the length
@@ -193,31 +157,18 @@ async def on_message(message):
             return
 
         # Content
-        if request in content.content_commands:
-            # Get the path to the folder
-            folder_path = os.path.join(content.content_path, request)
-            # Get a list of all the files in the folder
-            files = os.listdir(folder_path)
-            # Get a random file from the list
-            file = random.choice(files)
-            # Get the path to the file
-            file_path = os.path.join(folder_path, file)
-            # Send the file
-            await message.channel.send(f"Here is your {request}!", file=discord.File(file_path))
+        if request in content.get_commands():
+            reply = content.get_file(request)
+                        
+            await message.channel.send(f"Here is your {request}!", file=discord.File(reply))
             return
 
-        # Utility
-        # If request is in NdM format
+        # Check if the request is a valid dice roll
         if dice.is_valid_dice_format(request):
-            # Split the string into N and M
-            N, M = request.split("d")
-            # Convert N and M to integers
-            N = int(N)
-            M = int(M)
             # Roll the dice
-            rolls = [random.randint(1, M) for i in range(N)]
+            N, M, roll_history, roll = dice.roll_dice(request)
             # Format the reply
-            reply = f"You rolled {N}d{M} and got {sum(rolls)} ({rolls})"
+            reply = f"You rolled {N}d{M} and got {roll} ({roll_history})"
             await message.channel.send(reply)
             return
 
