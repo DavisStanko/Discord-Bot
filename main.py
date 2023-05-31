@@ -175,7 +175,7 @@ def day_weather(data, day):
     moonrise = datetime.fromtimestamp(moonrise).strftime("%#I:%M %p")
     moonset = datetime.fromtimestamp(moonset).strftime("%#I:%M %p")
     
-    reply += f"\nSunrise: {sunrise}\nSunset: {sunset}\nMoonrise: {moonrise}\nMoonset: {moonset}\nMoon Phase: {moon_phase}\nSummary: {summary}\nTemperature: {temp}°C\nFeels Like: {feels_like}°C\nPressure: {pressure} hPa\nHumidity: {humidity}%\nDew Point: {dew_point}°C\nWind Speed: {wind_speed} m/s\nWind Direction: {wind_deg}°\nWind Gust: {wind_gust} m/s\nWeather: {weather}\nClouds: {clouds}%\nProbability of Precipitation: {pop}%\nUV Index: {uvi}\n\n"
+    reply += f"\nSunrise: {sunrise}\nSunset: {sunset}\nMoonrise: {moonrise}\nMoonset: {moonset}\nMoon Phase: {moon_phase}\nSummary: {summary}\n Day Temperature: {day_temp}°C\nNight Temperature: {night_temp}°C\nEvening Temperature: {eve_temp}°C\nMorning Temperature: {morn_temp}°C\nFeels Like Day: {day_feels_like}°C\nFeels Like Night: {night_feels_like}°C\nFeels Like Evening: {eve_feels_like}°C\nFeels Like Morning: {morn_feels_like}°C\nPressure: {pressure} hPa\nHumidity: {humidity}%\nDew Point: {dew_point}°C\nWind Speed: {wind_speed} m/s\nWind Direction: {wind_deg}°\nWind Gust: {wind_gust} m/s\nWeather: {weather}\nClouds: {clouds}%\nProbability of Precipitation: {pop}%\nUV Index: {uvi}\n\n"
     
     return reply
 
