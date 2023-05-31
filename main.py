@@ -137,8 +137,47 @@ def hour_weather(data, hour):
         
     
 def day_weather(data, day):
-    return "Daily data not yet implemented."
+    reply = ""
     
+    days_from_now = data["daily"][day]
+    sunrise = days_from_now["sunrise"]
+    sunset = days_from_now["sunset"]
+    moonrise = days_from_now["moonrise"]
+    moonset = days_from_now["moonset"]
+    moon_phase = days_from_now["moon_phase"]
+    summary = days_from_now["summary"]
+    temp = days_from_now["temp"]
+    day_temp = temp["day"]
+    min_temp = temp["min"]
+    max_temp = temp["max"]
+    night_temp = temp["night"]
+    eve_temp = temp["eve"]
+    morn_temp = temp["morn"]
+    feels_like = days_from_now["feels_like"]
+    day_feels_like = feels_like["day"]
+    night_feels_like = feels_like["night"]
+    eve_feels_like = feels_like["eve"]
+    morn_feels_like = feels_like["morn"]
+    pressure = days_from_now["pressure"]
+    humidity = days_from_now["humidity"]
+    dew_point = days_from_now["dew_point"]
+    wind_speed = days_from_now["wind_speed"]
+    wind_deg = days_from_now["wind_deg"]
+    wind_gust = days_from_now["wind_gust"]
+    weather = days_from_now["weather"][0]["description"]
+    clouds = days_from_now["clouds"]
+    pop = days_from_now["pop"]
+    uvi = days_from_now["uvi"]
+    
+    # format sunrise, sunset, moonrise, moonset
+    sunrise = datetime.fromtimestamp(sunrise).strftime("%#I:%M %p")
+    sunset = datetime.fromtimestamp(sunset).strftime("%#I:%M %p")
+    moonrise = datetime.fromtimestamp(moonrise).strftime("%#I:%M %p")
+    moonset = datetime.fromtimestamp(moonset).strftime("%#I:%M %p")
+    
+    reply += f"\nSunrise: {sunrise}\nSunset: {sunset}\nMoonrise: {moonrise}\nMoonset: {moonset}\nMoon Phase: {moon_phase}\nSummary: {summary}\nTemperature: {temp}°C\nFeels Like: {feels_like}°C\nPressure: {pressure} hPa\nHumidity: {humidity}%\nDew Point: {dew_point}°C\nWind Speed: {wind_speed} m/s\nWind Direction: {wind_deg}°\nWind Gust: {wind_gust} m/s\nWeather: {weather}\nClouds: {clouds}%\nProbability of Precipitation: {pop}%\nUV Index: {uvi}\n\n"
+    
+    return reply
 
 
 @client.event
