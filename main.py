@@ -179,7 +179,7 @@ async def on_message(message):
         if request == "utility":
             reply = f"I react to the following utility commands:\n" \
                     "`!info` - Links to my GitHub page.\n" \
-                    "`!weather [location] [info|now|hour |day ]` - Displays the weather info in the specified location and time where X is an integer.\n" \
+                    "`!weather [location] [info|now|hour X|day X]` - Displays the weather info in the specified location and time where X is an integer.\n" \
                     "`!NdM` - Rolls N M-sided dice where N and M are positive integers.\n"
             await message.channel.send(reply)
             return
