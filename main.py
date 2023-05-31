@@ -175,7 +175,7 @@ def day_weather(data, day):
     moonrise = datetime.fromtimestamp(moonrise).strftime("%#I:%M %p")
     moonset = datetime.fromtimestamp(moonset).strftime("%#I:%M %p")
     
-    reply += f"\nSunrise: {sunrise}\nSunset: {sunset}\nMoonrise: {moonrise}\nMoonset: {moonset}\nMoon Phase: {moon_phase}\nSummary: {summary}\n Day Temperature: {day_temp}°C\nNight Temperature: {night_temp}°C\nEvening Temperature: {eve_temp}°C\nMorning Temperature: {morn_temp}°C\nFeels Like Day: {day_feels_like}°C\nFeels Like Night: {night_feels_like}°C\nFeels Like Evening: {eve_feels_like}°C\nFeels Like Morning: {morn_feels_like}°C\nPressure: {pressure} hPa\nHumidity: {humidity}%\nDew Point: {dew_point}°C\nWind Speed: {wind_speed} m/s\nWind Direction: {wind_deg}°\nWind Gust: {wind_gust} m/s\nWeather: {weather}\nClouds: {clouds}%\nProbability of Precipitation: {pop}%\nUV Index: {uvi}\n\n"
+    reply += f"\nSunrise: {sunrise}\nSunset: {sunset}\nMoonrise: {moonrise}\nMoonset: {moonset}\nMoon Phase: {moon_phase}\nSummary: {summary}\nDay Temperature: {day_temp}°C\n Min Temperature: {min_temp}°C\n Max Temperature: {max_temp}°C\n Night Temperature: {night_temp}°C\n Evening Temperature: {eve_temp}°C\n Morning Temperature: {morn_temp}°C\n Day Feels Like: {day_feels_like}°C\n Night Feels Like: {night_feels_like}°C\n Evening Feels Like: {eve_feels_like}°C\n Morning Feels Like: {morn_feels_like}°C\n Pressure: {pressure} hPa\n Humidity: {humidity}%\n Dew Point: {dew_point}°C\n Wind Speed: {wind_speed} m/s\n Wind Direction: {wind_deg}°\n Wind Gust: {wind_gust} m/s\n Weather: {weather}\n Clouds: {clouds}%\n Precipitation Probability: {pop}%\n UV Index: {uvi}\n\n"
     
     return reply
 
