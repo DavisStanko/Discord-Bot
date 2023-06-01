@@ -23,7 +23,7 @@ def get_file(request):
     # Get the path to the folder
     main_dir = os.path.dirname(os.path.realpath(__file__))
     content_path = os.path.join(main_dir, "content")
-    folder_path = os.path.join(content_path, request[1:])
+    folder_path = os.path.join(content_path, request)
     # Get the list of files
     files = os.listdir(folder_path)
     # Get a random file

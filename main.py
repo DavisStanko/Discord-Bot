@@ -35,6 +35,7 @@ async def on_ready():
 
 @client.event
 async def on_message(message):
+    # Get the request
     request = message.content.lower()
 
     # If message is from the bot, ignore
@@ -45,8 +46,6 @@ async def on_message(message):
     elif request.startswith('!'):
         # Remove the '!' from the request
         request = request[1:]
-        # .lower the request
-        request = request.lower()
 
         if request == "help":
             reply = "I can help you with the following commands:\n" \
