@@ -51,7 +51,7 @@ async def on_message(message):
             reply = "I can help you with the following commands:\n" \
                     "`!help` - Displays this help message.\n" \
                     "`!content` - Lists content commands.\n" \
-                    "`!games` - Lists game commands.\n" \
+                    "`!game` - Lists game commands.\n" \
                     "`!utility` - Lists utility commands."
             await message.channel.send(reply)
             return
