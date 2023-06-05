@@ -8,26 +8,16 @@ def get_random_question():
     url = "https://opentdb.com/api.php?amount=1&type=multiple"
     response = requests.get(url)
     data = json.loads(response.text)
-
-    question = data['results'][0]
-    question_text = html.unescape(question['question'])
-    correct_answer = html.unescape(question['correct_answer'])
-    incorrect_answers = [html.unescape(answer) for answer in question['incorrect_answers']]
+    data = data['results'][0]
+    
+    question_text = html.unescape(data['question'])
+    correct_answer = html.unescape(data['correct_answer'])
+    incorrect_answers = [html.unescape(answer) for answer in data['incorrect_answers']]
     answers = incorrect_answers + [correct_answer]
     random.shuffle(answers)
-
-    question_data = {
-        'question': question_text,
-        'answers': answers,
-        'correct_answer': correct_answer
-    }
-    
-    # Decode HTML entities from question_data
-    for key, value in question_data.items():
-        question_data[key] = html.unescape(value)
         
     # Bold the question
-    question = f"**{question}**\n"
+    question = f"**{question_text}**\n"
     # Enumerate the answers
     answers = [f"{i+1}. {answer}" for i, answer in enumerate(answers)]
     # Prompt to answer via number
@@ -36,4 +26,4 @@ def get_random_question():
     reply = question + "\n".join(answers) + "\n" + prompt
 
 
-    return question_data['answers'], question_data['correct_answer'], reply
+    return answers, correct_answer, reply
