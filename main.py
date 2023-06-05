@@ -59,7 +59,7 @@ async def on_message(message):
         if request == "utility":
             reply = f"I react to the following utility commands:\n" \
                     "`!info` - Links to my GitHub page.\n" \
-                    "`!weather [location] [info|now|hour (0-47)|day (0-7)]` - Displays the weather info in the specified location and time.\n" \
+                    "`!weather [location] [info|now|hour|day (0-47)|day (0-7)]` - Displays the weather info in the specified location and time.\n" \
                     "`!NdM` - Rolls N M-sided dice where N and M are positive integers.\n"
             await message.channel.send(reply)
             return
@@ -110,13 +110,14 @@ async def on_message(message):
         
         # Weather command
         if request.startswith("weather"):
-            # Split the request into words and parse it
+            # Split the request into words
             words = request.split()
-            city, info, time, error = weather.parse_weather(words)
-            
-            # Check if there was an error
-            if error is not None:
-                await message.channel.send(error)
+    
+            # Check if the request is valid and parse it
+            try:
+                city, info, time = weather.parse_weather(words)
+            except Exception as e:
+                await message.channel.send(e)
                 return
             
             # Get the coordinates of the city
