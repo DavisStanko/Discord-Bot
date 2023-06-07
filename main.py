@@ -80,10 +80,10 @@ async def on_message(message):
         
         if request == "gamble":
             reply = f"I react to the following gambling commands:\n" \
-                "`!start` - *Creates a new account* with 1000 points.\n" \
+                "`!start` - **Creates a new account** with 1000 points.\n" \
                 "`!points` - Displays your current points.\n" \
                 "`!roulette [red|black|green]` - Plays a game of roulette.\n" \
-                "*Gambling commands must be followed by an amount of money to gamble.*\n"
+                "**Gambling commands must be followed by an amount of money to gamble.**\n"
             await message.channel.send(reply)
             return
 
