@@ -9,6 +9,7 @@ import content
 import dice
 import trivia
 import weather
+import points
 
 load_dotenv()
 TOKEN = os.getenv('DISCORD_TOKEN')
@@ -21,6 +22,7 @@ intents.message_content = True
 
 client = discord.Client(intents=intents)
 
+points.create_table()
 
 @client.event
 async def on_ready():
@@ -52,6 +54,7 @@ async def on_message(message):
                     "`!help` - Displays this help message.\n" \
                     "`!content` - Lists content commands.\n" \
                     "`!game` - Lists game commands.\n" \
+                    "`!gamble` - Lists gambling commands.\n" \
                     "`!utility` - Lists utility commands."
             await message.channel.send(reply)
             return
@@ -71,9 +74,16 @@ async def on_message(message):
 
         if request == "game":
             reply = f"I react to the following game commands:\n" \
-                    "`!trivia` - Starts a game of trivia.\n" \
-                    "`!heads` or `!tails` - Flips a coin and tells you the result.\n" \
-                    "`!rock`, `!paper`, or `!scissors` - Plays a game of rock paper scissors.\n"
+                    "`!trivia` - Starts a game of trivia.\n"
+            await message.channel.send(reply)
+            return
+        
+        if request == "gamble":
+            reply = f"I react to the following gambling commands:\n" \
+                "`!start` - *Creates a new account* with 1000 points.\n" \
+                "`!points` - Displays your current points.\n" \
+                "`!roulette [red|black|green]` - Plays a game of roulette.\n" \
+                "*Gambling commands must be followed by an amount of money to gamble.*\n"
             await message.channel.send(reply)
             return
 
@@ -110,47 +120,59 @@ async def on_message(message):
                 await message.channel.send("Time's up! The correct answer is: " + correct_answer)
             return
         
-        # Coinflip
-        if request == "heads" or request == "tails":
-            # Get heads or tails
-            coin = random.randint(0, 1)
-            if coin == 0:
-                coin = "heads"
+        # Start gambling
+        if request == "start":
+            STARTING_POINTS = 1000
+            new_account = points.add_user(message.author.id, STARTING_POINTS)
+            # Check if the account was created
+            if not new_account:
+                await message.channel.send(f"{message.author.mention} You already have an account!")
+                return
             else:
-                coin = "tails"
-            # Check if the user guessed correctly
-            if request == coin:
-                await message.channel.send(f"{message.author.mention} You guessed correctly! It's {coin}!")
-            else:
-                await message.channel.send(f"{message.author.mention} You guessed incorrectly! It's {coin}!")
+                await message.channel.send(f"{message.author.mention} Your account has been created!")
+                return
         
-        # Rock Paper Scissors
-        if request == "rock" or request == "paper" or request == "scissors":
-            # Get the bot's choice
-            bot = random.randint(0, 2)
-            if bot == 0:
-                bot = "rock"
-            elif bot == 1:
-                bot = "paper"
-            else:
-                bot = "scissors"
+        # Check points
+        if request == "points":
+            user_points = points.get_points(message.author.id)
+            await message.channel.send(f"{message.author.mention} You have {user_points} points.")
+            return
+
+        # Roulette
+        if request.startswith("roulette"):
+            # Get wager
+            wager = request.split(" ")[2]
+            # Check that it's a positive integer
+            if not wager.isdigit():
+                await message.channel.send(f"{message.author.mention} Invalid wager.")
+                return
+            # Check that the user has enough points
+            user_points = points.get_points(message.author.id)
+            if int(wager) > user_points:
+                await message.channel.send(f"{message.author.mention} You don't have enough points.")
+                return
+            # Play the game
+            options = ["red", "black", "green"]
+            # Check user's choice
+            user_choice = request.split(" ")[1]
+            if user_choice not in options:
+                await message.channel.send(f"{message.author.mention} Invalid choice.")
+                return
+            # Spin the wheel
+            wheel = random.choices(options, weights=[18, 18, 2], k=1)[0]
             # Check if the user won
-            if request == "rock" and bot == "scissors":
-                await message.channel.send(f"{message.author.mention} You win! I chose {bot}!")
-            elif request == "paper" and bot == "rock":
-                await message.channel.send(f"{message.author.mention} You win! I chose {bot}!")
-            elif request == "scissors" and bot == "paper":
-                await message.channel.send(f"{message.author.mention} You win! I chose {bot}!")
+            if user_choice == wheel:
+                if user_choice == "green":
+                    points.add_points(message.author.id, int(wager) * 14)
+                else:
+                    points.add_points(message.author.id, int(wager))
+                await message.channel.send(f"{message.author.mention} You win! The wheel landed on {wheel}!")
+                return
             # Check if the bot won
-            elif request == "rock" and bot == "paper":
-                await message.channel.send(f"{message.author.mention} I win! I chose {bot}!")
-            elif request == "paper" and bot == "scissors":
-                await message.channel.send(f"{message.author.mention} I win! I chose {bot}!")
-            elif request == "scissors" and bot == "rock":
-                await message.channel.send(f"{message.author.mention} I win! I chose {bot}!")
-            # Check if it's a tie
             else:
-                await message.channel.send(f"{message.author.mention} It's a tie! I chose {bot}!")
+                points.add_points(message.author.id, -int(wager))
+                await message.channel.send(f"{message.author.mention} You lose! The wheel landed on {wheel}!")
+                return
         
         # Weather command
         if request.startswith("weather"):
