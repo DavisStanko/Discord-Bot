@@ -72,7 +72,8 @@ async def on_message(message):
         if request == "game":
             reply = f"I react to the following game commands:\n" \
                     "`!trivia` - Starts a game of trivia.\n" \
-                    "`!heads` or `!tails` - Flips a coin and tells you the result.\n"                        
+                    "`!heads` or `!tails` - Flips a coin and tells you the result.\n" \
+                    "`!rock`, `!paper`, or `!scissors` - Plays a game of rock paper scissors.\n"
             await message.channel.send(reply)
             return
 
@@ -122,6 +123,34 @@ async def on_message(message):
                 await message.channel.send(f"{message.author.mention} You guessed correctly! It's {coin}!")
             else:
                 await message.channel.send(f"{message.author.mention} You guessed incorrectly! It's {coin}!")
+        
+        # Rock Paper Scissors
+        if request == "rock" or request == "paper" or request == "scissors":
+            # Get the bot's choice
+            bot = random.randint(0, 2)
+            if bot == 0:
+                bot = "rock"
+            elif bot == 1:
+                bot = "paper"
+            else:
+                bot = "scissors"
+            # Check if the user won
+            if request == "rock" and bot == "scissors":
+                await message.channel.send(f"{message.author.mention} You win! I chose {bot}!")
+            elif request == "paper" and bot == "rock":
+                await message.channel.send(f"{message.author.mention} You win! I chose {bot}!")
+            elif request == "scissors" and bot == "paper":
+                await message.channel.send(f"{message.author.mention} You win! I chose {bot}!")
+            # Check if the bot won
+            elif request == "rock" and bot == "paper":
+                await message.channel.send(f"{message.author.mention} I win! I chose {bot}!")
+            elif request == "paper" and bot == "scissors":
+                await message.channel.send(f"{message.author.mention} I win! I chose {bot}!")
+            elif request == "scissors" and bot == "rock":
+                await message.channel.send(f"{message.author.mention} I win! I chose {bot}!")
+            # Check if it's a tie
+            else:
+                await message.channel.send(f"{message.author.mention} It's a tie! I chose {bot}!")
         
         # Weather command
         if request.startswith("weather"):
