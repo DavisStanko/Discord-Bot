@@ -71,7 +71,8 @@ async def on_message(message):
 
         if request == "game":
             reply = f"I react to the following game commands:\n" \
-                    "`!trivia` - Starts a game of trivia."
+                    "`!trivia` - Starts a game of trivia.\n" \
+                    "`!heads` or `!tails` - Flips a coin and tells you the result.\n"                        
             await message.channel.send(reply)
             return
 
@@ -107,6 +108,20 @@ async def on_message(message):
             except asyncio.TimeoutError:
                 await message.channel.send("Time's up! The correct answer is: " + correct_answer)
             return
+        
+        # Coinflip
+        if request == "heads" or request == "tails":
+            # Get heads or tails
+            coin = random.randint(0, 1)
+            if coin == 0:
+                coin = "heads"
+            else:
+                coin = "tails"
+            # Check if the user guessed correctly
+            if request == coin:
+                await message.channel.send(f"{message.author.mention} You guessed correctly! It's {coin}!")
+            else:
+                await message.channel.send(f"{message.author.mention} You guessed incorrectly! It's {coin}!")
         
         # Weather command
         if request.startswith("weather"):
