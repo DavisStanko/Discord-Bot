@@ -20,7 +20,7 @@ def add_user(userID, starting_points):
 
     # Check if userID is already in the rows list
     for row in rows:
-        if row[1] == userID:
+        if row[1] == str(userID):
             return False
 
     # If userID is not found, add the user to the CSV

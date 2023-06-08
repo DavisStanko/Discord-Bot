@@ -184,6 +184,34 @@ async def on_message(message):
                 await message.channel.send(f"{message.author.mention} You lose! The wheel landed on {wheel}!")
                 return
         
+        # Slots
+        if request.startswith("slots"):
+            # Get wager
+            wager = request.split(" ")[1]
+            # Check that it's a positive integer
+            if not wager.isdigit():
+                await message.channel.send(f"{message.author.mention} Invalid wager.")
+                return
+            # Check that the user has enough points
+            user_points = points.get_points(message.author.id)
+            if int(wager) > user_points:
+                await message.channel.send(f"{message.author.mention} You don't have enough points.")
+                return
+            # Play the game
+            options = ["1", "2", "3", "4", "5"]
+            # Spin the wheel
+            wheel = random.choices(options, weights=[1, 1, 1, 1, 1], k=3)
+            # Check if the user won
+            if wheel[0] == wheel[1] == wheel[2]:
+                points.add_points(message.author.id, int(wager) * 20)
+                await message.channel.send(f"{message.author.mention} You win! The wheel landed on | {wheel[0]} {wheel[1]} {wheel[2]} |")
+                return
+            # Check if the bot won
+            else:
+                points.add_points(message.author.id, -int(wager))
+                await message.channel.send(f"{message.author.mention} You lose! The wheel landed on | {wheel[0]} {wheel[1]} {wheel[2]} |")
+                return
+
         # Weather command
         if request.startswith("weather"):
             # Split the request into words
