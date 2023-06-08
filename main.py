@@ -84,24 +84,26 @@ async def on_message(message):
             
             # Check if the answer is correct
             def check_answer(m):
-                return m.author == message.author and m.channel == message.channel and m.content.strip() in ["1", "2", "3", "4"]
+                return (
+                    m.author == message.author
+                    and m.channel == message.channel
+                    and m.content.strip() in ["1", "2", "3", "4"]
+                )
 
             try:
-                user_response = await client.wait_for('message', check=check_answer, timeout=10.0)
-                user_answer = user_response.content.strip()
-                if user_answer.isdigit():
-                    user_answer = int(user_answer)
-                    if 1 <= user_answer <= len(answers):
-                        selected_answer = answers[user_answer - 1]
-                        if selected_answer.endswith(correct_answer):
-                            await message.channel.send("Correct answer!")
-                        else:
-                            await message.channel.send("Wrong answer! The correct answer is: " + correct_answer)
-                        return
-                await message.channel.send("Invalid answer. The correct answer is: " + correct_answer)
+                user_response = await client.wait_for("message", check=check_answer, timeout=10.0)
+                user_answer = int(user_response.content.strip())
+                selected_answer = answers[user_answer - 1]
+
+                if selected_answer.endswith(correct_answer):
+                    await message.channel.send("Correct answer!")
+                    return
+                else:
+                    await message.channel.send(f"Wrong answer! The correct answer is: {correct_answer}")
+                    return
             except asyncio.TimeoutError:
-                await message.channel.send("Time's up! The correct answer is: " + correct_answer)
-            return
+                await message.channel.send(f"Time's up! The correct answer is: {correct_answer}")
+                return
         
         # Start gambling
         if request == "start":
