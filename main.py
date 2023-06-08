@@ -3,6 +3,7 @@ import random
 import discord
 from dotenv import load_dotenv
 import asyncio
+import datetime
 
 # Import custom modules
 import content
@@ -45,7 +46,7 @@ async def on_message(message):
         return
 
     # If message is a command
-    elif request.startswith('!'):
+    elif request.startswith('!'):        
         # Remove the '!' from the request
         request = request[1:]
 
@@ -82,6 +83,7 @@ async def on_message(message):
             reply = f"I react to the following gambling commands:\n" \
                 "`!start` - **Creates a new account** with 1000 points.\n" \
                 "`!points` - Displays your current points.\n" \
+                "`!income` - Gives you 100 points. Can only be used once every 30 minutes.\n" \
                 "`!roulette [red|black|green]` - Plays a game of roulette.\n" \
                 "**Gambling commands must be followed by an amount of money to gamble.**\n"
             await message.channel.send(reply)
@@ -137,6 +139,31 @@ async def on_message(message):
             user_points = points.get_points(message.author.id)
             await message.channel.send(f"{message.author.mention} You have {user_points} points.")
             return
+
+        # Income
+        if request == "income":
+            # Get current unix timestamp
+            current_time = current_timestamp = int(datetime.datetime.now().timestamp())
+            
+            # Compare to last income timestamp
+            last_income = points.get_last_income(message.author.id)
+            
+            # If it's been 30 minutes since last income
+            if current_time - last_income >= 1800:
+                # Add 100 points
+                points.add_points(message.author.id, 100)
+                # Update last income timestamp
+                points.set_last_income(message.author.id, current_time)
+                await message.channel.send(f"{message.author.mention} You've received 100 points!")
+                return
+            else:
+                # get time left until 30 minutes is up
+                time_left = 1800 - (current_time - last_income)
+                # convert to minutes and seconds
+                minutes = time_left // 60
+                seconds = time_left % 60
+                await message.channel.send(f"{message.author.mention} You can't collect income yet! Try again in {minutes} minutes and {seconds} seconds.")
+                return
 
         # Roulette
         if request.startswith("roulette"):
