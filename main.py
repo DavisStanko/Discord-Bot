@@ -6,6 +6,7 @@ import asyncio
 import datetime
 
 # Import custom modules
+import messages
 import content
 import dice
 import trivia
@@ -51,47 +52,27 @@ async def on_message(message):
         request = request[1:]
 
         if request == "help":
-            reply = "I can help you with the following commands:\n" \
-                    "`!help` - Displays this help message.\n" \
-                    "`!content` - Lists content commands.\n" \
-                    "`!game` - Lists game commands.\n" \
-                    "`!gamble` - Lists gambling commands.\n" \
-                    "`!utility` - Lists utility commands."
-            await message.channel.send(reply)
+            await message.channel.send(messages.get_help())
             return
 
         if request == "utility":
-            reply = f"I react to the following utility commands:\n" \
-                    "`!info` - Links to my GitHub page.\n" \
-                    "`!weather [location] [info|now|hour|day (0-47)|day (0-7)]` - Displays the weather info in the specified location and time.\n" \
-                    "`!NdM` - Rolls N M-sided dice where N and M are positive integers.\n"
-            await message.channel.send(reply)
+            await message.channel.send(messages.get_utility())
             return
 
         if request == "content":
-            reply = f"I react to the following content commands by sending a random media file from the specified directory:\n{content.get_commands()}"
-            await message.channel.send(reply)
+            await message.channel.send(messages.get_content())
             return
 
         if request == "game":
-            reply = f"I react to the following game commands:\n" \
-                    "`!trivia` - Starts a game of trivia.\n"
-            await message.channel.send(reply)
+            await message.channel.send(messages.get_game())
             return
-        
+
         if request == "gamble":
-            reply = f"I react to the following gambling commands:\n" \
-                "`!start` - **Creates a new account** with 1000 points.\n" \
-                "`!points` - Displays your current points.\n" \
-                "`!income` - Gives you 100 points. Can only be used once every 30 minutes.\n" \
-                "`!roulette [red|black|green]` - Plays a game of roulette.\n" \
-                "**Gambling commands must be followed by an amount of money to gamble.**\n"
-            await message.channel.send(reply)
+            await message.channel.send(messages.get_gamble())
             return
 
         if request == "info":
-            reply = f"https://github.com/DavisStanko/Discord-Bot"
-            await message.channel.send(reply)
+            await message.channel.send(messages.get_info())
             return
 
         # Trivia
