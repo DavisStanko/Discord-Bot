@@ -31,7 +31,7 @@ def get_gamble():
             "`!points` - Displays your current points.\n" \
             "`!income` - Gives you 100 points. Can only be used once every 30 minutes.\n" \
             "`!roulette [wager] [red|black|green]` - Plays a game of roulette.\n" \
-            "`!slots [wager]` - Plays a game of slots.\n" \
+            "`!slots [wager]` - Plays a game of slots.\n"
     return reply
 
 def get_info():
