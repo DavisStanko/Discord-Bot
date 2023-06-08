@@ -151,7 +151,7 @@ async def on_message(message):
         # Roulette
         if request.startswith("roulette"):
             # Get wager
-            wager = request.split(" ")[2]
+            wager = request.split(" ")[1]
             # Check that it's a positive integer
             if not wager.isdigit():
                 await message.channel.send(f"{message.author.mention} Invalid wager.")
@@ -164,7 +164,7 @@ async def on_message(message):
             # Play the game
             options = ["red", "black", "green"]
             # Check user's choice
-            user_choice = request.split(" ")[1]
+            user_choice = request.split(" ")[2]
             if user_choice not in options:
                 await message.channel.send(f"{message.author.mention} Invalid choice.")
                 return
