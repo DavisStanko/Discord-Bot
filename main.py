@@ -43,28 +43,25 @@ async def on_ready():
 
     # Control weather and news updates
     while True:
-        current_hour = datetime.datetime.now().hour
+        # Get current unix timestamp
+        current_time = int(datetime.datetime.now().timestamp())
 
-        # Calculate the time until the next trigger point
-        time_to_sleep = 0
-        if current_hour < 6:
-            time_to_sleep = (6 - current_hour) * 3600  # Sleep until 6 AM
-        elif current_hour < 12:
-            time_to_sleep = (12 - current_hour) * 3600  # Sleep until 12 PM
-        elif current_hour < 18:
-            time_to_sleep = (18 - current_hour) * 3600  # Sleep until 6 PM
-        else:
-            time_to_sleep = (24 - current_hour + 6) * 3600  # Sleep until 6 AM next day
+        # Get the unix timestamp of the next trigger point 12am 6am 12pm 6pm
+        next_trigger = current_time + (3600 - (current_time % 3600))
+
+        # Get the time to sleep
+        time_to_sleep = next_trigger - current_time
 
         # Sleep until the next trigger point
-        time.sleep(time_to_sleep)
+        print(f"Sleeping for {time_to_sleep} seconds")
+        await asyncio.sleep(time_to_sleep)
 
         # For each guild
         for guild in client.guilds:
             # Get the news channel
             news_channel = settings.get_news_channel(guild)
 
-            if news_channel != None:
+            if news_channel is not None:
                 # Get the weather data
                 weather_data = weather.main(guild, WEATHER_API_KEY)
                 # Get the news data
