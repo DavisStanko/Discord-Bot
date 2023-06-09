@@ -107,6 +107,10 @@ async def on_message(message):
             await message.channel.send(messages.get_gamble())
             return
 
+        if request == "schedule":
+            await message.channel.send(messages.get_schedule())
+            return
+
         if request == "info":
             await message.channel.send(messages.get_info())
             return

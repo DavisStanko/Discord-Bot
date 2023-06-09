@@ -6,13 +6,14 @@ def get_help():
             "`!content` - Lists content commands.\n" \
             "`!game` - Lists game commands.\n" \
             "`!gamble` - Lists gambling commands.\n" \
-            "`!utility` - Lists utility commands."
+            "`!utility` - Lists utility commands.\n" \
+            "`!schedule` - Explains scheduled events.\n" \
+            
     return reply
 
 def get_utility():
     reply = "I react to the following utility commands:\n" \
             "`!info` - Links to my GitHub page.\n" \
-            "`!weather [location] [info|now|hour|day (0-47)|day (0-7)]` - Displays the weather info in the specified location and time.\n" \
             "`!NdM` - Rolls N M-sided dice where N and M are positive integers.\n"
     return reply
 
@@ -38,3 +39,7 @@ def get_info():
     reply = f"I react to the following info commands:\n" \
             "`!info` - Links to my GitHub page.\n"
     return reply
+
+def get_schedule():
+    reply = f"Every 6 hours I will send the current weather and top 3 news articles for the locations specified by the server owner.\n" \
+            "If you are the admin and would like to set your location, please contact the my owner."
