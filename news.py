@@ -8,7 +8,7 @@ def get_news_location(guild):
         reader = csv.reader(file)
         next(reader)
         for row in reader:
-            if row[1] == str(guild.id):
+            if row[1] == str(guild):
                 country_code = row[3]
                 return country_code
 

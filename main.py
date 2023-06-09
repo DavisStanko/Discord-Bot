@@ -4,8 +4,6 @@ import discord
 from dotenv import load_dotenv
 import asyncio
 import datetime
-import time
-
 # Import custom modules
 import messages
 import content

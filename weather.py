@@ -10,8 +10,8 @@ def get_city(guild):
     with open('settings.csv', 'r') as file:
         reader = csv.reader(file)
         for row in reader:
-            if row[0] == str(guild.id):
-                return row[1]
+            if row[1] == str(guild):
+                return row[2]
 
 def main(guild, WEATHER_API_KEY):
     # read the city from the settings file for the guild
