@@ -136,7 +136,7 @@ async def on_message(message):
                 if selected_answer.endswith(correct_answer):
                     # Add 10 points
                     points.add_points(message.author.id, 10)
-                    await message.channel.send("Correct answer!")
+                    await message.channel.send("Correct answer! You get 10 points!")
                     return
                 else:
                     await message.channel.send(f"Wrong answer! The correct answer is: {correct_answer}")
