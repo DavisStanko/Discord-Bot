@@ -4,6 +4,7 @@ import discord
 from dotenv import load_dotenv
 import asyncio
 import datetime
+
 # Import custom modules
 import messages
 import content
@@ -21,12 +22,15 @@ ADMIN = os.getenv('DISCORD_ADMIN')
 WEATHER_API_KEY = os.getenv('WEATHER_API_KEY')
 NEWS_API_KEY = os.getenv('NEWS_API_KEY')
 
+NOUNS = "nouns.txt"
+
 intents = discord.Intents.default()
 intents.message_content = True
 
 client = discord.Client(intents=intents)
 
 points.create_table()
+
 
 @client.event
 async def on_ready():
@@ -96,10 +100,6 @@ async def on_message(message):
             await message.channel.send(messages.get_game())
             return
 
-        if request == "gamble":
-            await message.channel.send(messages.get_gamble())
-            return
-
         if request == "schedule":
             await message.channel.send(messages.get_schedule())
             return
@@ -109,7 +109,12 @@ async def on_message(message):
             return
 
         # Trivia
-        if request == "trivia":            
+        if request == "trivia":
+            # Check if user has an account
+            if not points.has_account(message.author.id):
+                await message.channel.send(f"{message.author.mention} You need to create an account first! Use !start")
+                return
+            
             answers, correct_answer, reply = trivia.get_random_question()
 
             # Send the question and ping the user
@@ -129,6 +134,8 @@ async def on_message(message):
                 selected_answer = answers[user_answer - 1]
 
                 if selected_answer.endswith(correct_answer):
+                    # Add 10 points
+                    points.add_points(message.author.id, 10)
                     await message.channel.send("Correct answer!")
                     return
                 else:
@@ -138,6 +145,53 @@ async def on_message(message):
                 await message.channel.send(f"Time's up! The correct answer is: {correct_answer}")
                 return
         
+        # Word Scramble
+        if request == "wordscramble":
+            # check if user has an account
+            if not points.has_account(message.author.id):
+                await message.channel.send(f"{message.author.mention} You need to create an account first! Use !start")
+                return
+            
+            # Open nouns
+            with open(NOUNS, "r") as f:
+                nouns = f.readlines()
+                random_line = random.randint(0, len(nouns) - 1)
+                word = nouns[random_line].strip()
+
+            # Get length of word
+            word_length = len(word)
+
+            # randomize the positions of the letters
+            prompt = list(word)
+            random.shuffle(prompt)
+            prompt = "".join(prompt)
+
+            # Send the word and ping the user
+            await message.channel.send(f"{message.author.mention}\nUnscramble the word in 30 seconds: {prompt}")
+
+            # Check if the answer is correct
+            def check_answer(m):
+                return (
+                    m.author == message.author
+                    and m.channel == message.channel
+                )
+            
+            try:
+                user_response = await client.wait_for("message", check=check_answer, timeout=30.0)
+                user_answer = user_response.content.strip()
+
+                if user_answer == word:
+                    # Add 10 points
+                    points.add_points(message.author.id, 10 * word_length)
+                    await message.channel.send(f"Correct answer! You get {10 * word_length} points!")
+                    return
+                else:
+                    await message.channel.send(f"Wrong answer! The correct answer is: {word}")
+                    return
+            except asyncio.TimeoutError:
+                await message.channel.send(f"Time's up! The correct answer is: {word}")
+                return
+
         # Start gambling
         if request == "start":
             STARTING_POINTS = 1000
@@ -152,12 +206,22 @@ async def on_message(message):
         
         # Check points
         if request == "points":
+            # Check if user has an account
+            if not points.has_account(message.author.id):
+                await message.channel.send(f"{message.author.mention} You need to create an account first! Use !start")
+                return
+
             user_points = points.get_points(message.author.id)
             await message.channel.send(f"{message.author.mention} You have {user_points} points.")
             return
 
         # Income
         if request == "income":
+            # Check if user has an account
+            if not points.has_account(message.author.id):
+                await message.channel.send(f"{message.author.mention} You need to create an account first! Use !start")
+                return
+
             # Get current unix timestamp
             current_time = current_timestamp = int(datetime.datetime.now().timestamp())
             
@@ -183,6 +247,11 @@ async def on_message(message):
 
         # Roulette
         if request.startswith("roulette"):
+            # Check if user has an account
+            if not points.has_account(message.author.id):
+                await message.channel.send(f"{message.author.mention} You need to create an account first! Use !start")
+                return
+
             # Get wager
             wager = request.split(" ")[1]
             # Check that it's a positive integer
@@ -219,6 +288,11 @@ async def on_message(message):
         
         # Slots
         if request.startswith("slots"):
+            # Check if user has an account
+            if not points.has_account(message.author.id):
+                await message.channel.send(f"{message.author.mention} You need to create an account first! Use !start")
+                return
+            
             # Get wager
             wager = request.split(" ")[1]
             # Check that it's a positive integer

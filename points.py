@@ -12,6 +12,19 @@ def create_table():
     else:
         print(f'{FILENAME} already exists.')
 
+def has_account(userID):
+    # Load all rows from the CSV file
+    with open(FILENAME, 'r') as file:
+        reader = csv.reader(file)
+        rows = list(reader)
+
+    # Check if userID is in the CSV
+    for row in rows:
+        if row[1] == str(userID):
+            return True
+
+    return False
+
 def add_user(userID, starting_points):
     # Load all rows from the CSV file
     with open(FILENAME, 'r') as file:

@@ -5,7 +5,6 @@ def get_help():
             "`!help` - Displays this help message.\n" \
             "`!content` - Lists content commands.\n" \
             "`!game` - Lists game commands.\n" \
-            "`!gamble` - Lists gambling commands.\n" \
             "`!utility` - Lists utility commands.\n" \
             "`!schedule` - Explains scheduled events.\n" \
             
@@ -23,14 +22,10 @@ def get_content():
 
 def get_game():
     reply = f"I react to the following game commands:\n" \
-            "`!trivia` - Starts a game of trivia.\n"
-    return reply
-
-def get_gamble():
-    reply = f"I react to the following gambling commands:\n" \
             "`!start` - **Creates a new account** with 1000 points.\n" \
             "`!points` - Displays your current points.\n" \
             "`!income` - Gives you 100 points. Can only be used once every 30 minutes.\n" \
+            "`!trivia` - Starts a game of trivia. Correct answers give you 10 points.\n" \
             "`!roulette [wager] [red|black|green]` - Plays a game of roulette.\n" \
             "`!slots [wager]` - Plays a game of slots.\n"
     return reply
