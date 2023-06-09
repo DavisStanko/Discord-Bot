@@ -1,36 +1,29 @@
 import requests
 import json
 from datetime import datetime
+import csv
 
-# Parse weather command
-def parse_weather(words):
-    try:
-        city = words[1] # Extract the location from the message
-    except IndexError:
-        raise IndexError("Please specify a location.")
-    
-    try:
-        info = words[2]  # Extract the info from the message
-        # check if info is valid
-        if info not in ["info", "current", "minutely", "hour", "day"]:
-            raise ValueError("Please specify a valid info (info, current, minutely, hour, day).")
-    except IndexError:
-        info = "current"
-    
-    # if hour or day is specified check if 0-47 or 0-7
-    if info in ["hour", "day"]:
-        try:
-            time = int(words[3])
-            if info == "hour" and (time < 0 or time > 47):
-                raise ValueError("Please specify a valid hour (0-47).")
-            elif info == "day" and (time < 0 or time > 7):
-                raise ValueError("Please specify a valid day (0-7).")
-        except (IndexError, ValueError):
-            raise ValueError("Please specify a valid time (0-47 for hour, 0-7 for day).")
-    else:
-        time = None
-    
-    return city, info, time
+FILENAME = "settings.csv"
+
+def get_city(guild):
+    # read the city from the settings file for the guild
+    with open('settings.csv', 'r') as file:
+        reader = csv.reader(file)
+        for row in reader:
+            if row[0] == str(guild.id):
+                return row[1]
+
+def main(guild, WEATHER_API_KEY):
+    # read the city from the settings file for the guild
+    city = get_city(guild)
+    # get the coordinates of the city
+    lat, lon = get_coordinates(city, WEATHER_API_KEY)
+    # get the weather data
+    data = get_weather(lat, lon, WEATHER_API_KEY)
+    # get the current weather
+    current = current_weather(data)
+    weather_response = f"Here is the weather for {city}:\n{current}"
+    return weather_response
 
 # Function to fetch weather data from the API
 def get_coordinates(city, WEATHER_API_KEY):

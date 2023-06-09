@@ -10,14 +10,17 @@ import messages
 import content
 import dice
 import trivia
-import weather
 import points
+import weather
+import news
+import settings
 
 load_dotenv()
 TOKEN = os.getenv('DISCORD_TOKEN')
 SERVER = os.getenv('DISCORD_SERVER')
 ADMIN = os.getenv('DISCORD_ADMIN')
 WEATHER_API_KEY = os.getenv('WEATHER_API_KEY')
+NEWS_API_KEY = os.getenv('NEWS_API_KEY')
 
 intents = discord.Intents.default()
 intents.message_content = True
@@ -28,14 +31,35 @@ points.create_table()
 
 @client.event
 async def on_ready():
-    # Connects to servers from .env
-    for guild in client.guilds:
-        if guild.name == SERVER:
-            break
+    # List connected servers
+    guilds = client.guilds
+
+    # Get guild names
+    guild_names = [guild.name for guild in guilds]
 
     # Print out information for debugging
-    print(f'{client.user} is connected to the following servers:\n{SERVER}')
+    print(f'{client.user} is connected to the following servers:\n {guild_names}')
 
+    # Control weather and news updates
+    while True:
+        # if 0 6 12 18 EST
+        if datetime.datetime.now().hour % 6 == 0:
+            # For each guild
+            for guild in client.guilds:
+                # Get the news channel
+                news_channel = settings.get_news_channel(guild)
+
+                if news_channel != None:
+                    # Get the weather data
+                    weather_data = weather.main(guild, WEATHER_API_KEY)
+                    # Get the news data
+                    news_data = news.main(guild, NEWS_API_KEY)
+                    # send to news channel
+                    await news_channel.send(weather_data)
+                    await news_channel.send(news_data)
+                
+        # Sleep for 1 minute
+        await asyncio.sleep(60)
 
 @client.event
 async def on_message(message):
@@ -211,54 +235,6 @@ async def on_message(message):
                 points.add_points(message.author.id, -int(wager))
                 await message.channel.send(f"{message.author.mention} You lose! The wheel landed on | {wheel[0]} {wheel[1]} {wheel[2]} |")
                 return
-
-        # Weather command
-        if request.startswith("weather"):
-            # Split the request into words
-            words = request.split()
-    
-            # Check if the request is valid and parse it
-            try:
-                city, info, time = weather.parse_weather(words)
-            except Exception as e:
-                await message.channel.send(e)
-                return
-            
-            # Get the coordinates of the city
-            lat, lon = weather.get_coordinates(city, WEATHER_API_KEY)
-            # If the city is not found
-            if lat is None or lon is None:
-                await message.channel.send("City not found.")
-                return
-            
-            # Get the weather data
-            weather_data = weather.get_weather(lat, lon, WEATHER_API_KEY)
-            # run function based on info
-            if info == "info":
-                reply = weather.info_weather(weather_data)
-                reply = f"{city}'s info is:\n{reply}"
-            elif info == "current":
-                reply = weather.current_weather(weather_data)
-                reply = f"The current weather in {city} is:\n{reply}"
-            elif info == "hour":
-                reply = weather.hour_weather(weather_data, time)
-                reply = f"In {time} hours the weather in {city} will be:\n{reply}"
-            elif info == "day":
-                reply = weather.day_weather(weather_data, time)
-                reply = f"In {time} days the weather in {city} will be:\n{reply}"
-
-            # check if over 2000 characters
-            if len(reply) > 2000:
-                # check how many times 2000 goes into the length
-                num = len(reply) // 2000
-                # split the reply into num parts
-                replies = [reply[i:i+2000] for i in range(0, len(reply), 2000)]
-                # send each part
-                for i in range(num):
-                    await message.channel.send(replies[i])
-                return
-            await message.channel.send(reply)
-            return
 
         # Content
         if request in content.get_commands():
