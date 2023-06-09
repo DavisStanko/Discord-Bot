@@ -26,6 +26,7 @@ def get_game():
             "`!points` - Displays your current points.\n" \
             "`!income` - Gives you 100 points. Can only be used once every 30 minutes.\n" \
             "`!trivia` - Starts a game of trivia. Correct answers give you 10 points.\n" \
+            "`!wordscramble` - Starts a game of word scramble. Correct answers give you 10 points per letter.\n" \
             "`!roulette [wager] [red|black|green]` - Plays a game of roulette.\n" \
             "`!slots [wager]` - Plays a game of slots.\n"
     return reply
