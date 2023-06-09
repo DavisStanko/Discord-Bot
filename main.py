@@ -178,7 +178,7 @@ async def on_message(message):
             
             try:
                 user_response = await client.wait_for("message", check=check_answer, timeout=30.0)
-                user_answer = user_response.content.strip()
+                user_answer = user_response.content.strip().lower()
 
                 if user_answer == word:
                     # Add 10 points
