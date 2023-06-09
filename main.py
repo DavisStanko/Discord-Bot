@@ -33,11 +33,9 @@ async def on_ready():
     # List connected servers
     guilds = client.guilds
 
-    # Get guild names
-    guild_names = [guild.name for guild in guilds]
-
-    # Print out information for debugging
-    print(f'{client.user} is connected to the following servers:\n {guild_names}')
+    # Print guild names with IDs
+    for guild in guilds:
+        print(f"{guild.name} ({guild.id})")
 
     # Control weather and news updates
     while True:
