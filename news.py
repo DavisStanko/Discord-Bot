@@ -22,8 +22,8 @@ def parse_news(data):
     # get first 3 news articles' links
     articles = data["results"]
     links = []
-    for article in articles[:3]:
-        links.append(article["link"])
+    for article in range(3):
+        links.append(articles[article]["link"])
     return links
 
 def main(guild, NEWS_API_KEY): 
@@ -33,4 +33,4 @@ def main(guild, NEWS_API_KEY):
     parsed_news = parse_news(news)
     split_news = "\n".join(parsed_news)
     news_report = f"Here are the top 3 news right now:\n{split_news}"
-    return split_news
+    return news_report
