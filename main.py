@@ -4,6 +4,7 @@ import discord
 from dotenv import load_dotenv
 import asyncio
 import datetime
+import time
 
 # Import custom modules
 import messages
@@ -42,24 +43,35 @@ async def on_ready():
 
     # Control weather and news updates
     while True:
-        # if 0 6 12 18 EST
-        if datetime.datetime.now().hour % 6 == 0:
-            # For each guild
-            for guild in client.guilds:
-                # Get the news channel
-                news_channel = settings.get_news_channel(guild)
+        current_hour = datetime.datetime.now().hour
 
-                if news_channel != None:
-                    # Get the weather data
-                    weather_data = weather.main(guild, WEATHER_API_KEY)
-                    # Get the news data
-                    news_data = news.main(guild, NEWS_API_KEY)
-                    # send to news channel
-                    await news_channel.send(weather_data)
-                    await news_channel.send(news_data)
-                
-        # Sleep for 1 minute
-        await asyncio.sleep(60)
+        # Calculate the time until the next trigger point
+        time_to_sleep = 0
+        if current_hour < 6:
+            time_to_sleep = (6 - current_hour) * 3600  # Sleep until 6 AM
+        elif current_hour < 12:
+            time_to_sleep = (12 - current_hour) * 3600  # Sleep until 12 PM
+        elif current_hour < 18:
+            time_to_sleep = (18 - current_hour) * 3600  # Sleep until 6 PM
+        else:
+            time_to_sleep = (24 - current_hour + 6) * 3600  # Sleep until 6 AM next day
+
+        # Sleep until the next trigger point
+        time.sleep(time_to_sleep)
+
+        # For each guild
+        for guild in client.guilds:
+            # Get the news channel
+            news_channel = settings.get_news_channel(guild)
+
+            if news_channel != None:
+                # Get the weather data
+                weather_data = weather.main(guild, WEATHER_API_KEY)
+                # Get the news data
+                news_data = news.main(guild, NEWS_API_KEY)
+                # send to news channel
+                await news_channel.send(weather_data)
+                await news_channel.send(news_data)
 
 @client.event
 async def on_message(message):
