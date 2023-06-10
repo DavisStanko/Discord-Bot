@@ -6,14 +6,14 @@ import asyncio
 import datetime
 
 # Import custom modules
-import messages
-import content
-import dice
-import trivia
-import points
-import weather
-import news
-import settings
+from commands import content
+from commands import dice
+from commands import messages
+from commands import news
+from commands import points
+from commands import settings
+from commands import trivia
+from commands import weather
 
 load_dotenv()
 TOKEN = os.getenv('DISCORD_TOKEN')

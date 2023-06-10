@@ -1,7 +1,7 @@
 import os
 import csv
 
-FILENAME = 'points.csv'
+FILENAME = 'databases/points.csv'
 
 def create_table():
     if not os.path.exists(FILENAME):

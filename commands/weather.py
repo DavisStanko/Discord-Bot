@@ -1,9 +1,11 @@
 import requests
 import json
 from datetime import datetime
-import settings
 
-FILENAME = "settings.csv"
+# Import custom modules
+from commands import settings
+
+FILENAME = "databases/settings.csv"
 
 def main(guild, WEATHER_API_KEY):
     # read the city from the settings file for the guild

@@ -1,6 +1,6 @@
 import csv
 
-FILENAME = "settings.csv"
+FILENAME = "databases/settings.csv"
 
 def get_city(guild):
     # read the city from the settings file for the guild

@@ -1,8 +1,10 @@
 import json
 import requests
-import settings
 
-FILENAME = "settings.csv"
+# Import custom modules
+from commands import settings
+
+FILENAME = "databases/settings.csv"
 
 def get_news(country_code, NEWS_API_KEY):
     news = f"https://newsdata.io/api/1/news?apikey={NEWS_API_KEY}&country={country_code}"
