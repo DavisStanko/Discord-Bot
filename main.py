@@ -340,17 +340,8 @@ async def on_message(message):
             await message.channel.send(f"Here is your {request}!", file=discord.File(reply))
             return
 
-        # Check if the request is a valid dice roll
-        if dice.is_valid_dice_format(request):
-            # Roll the dice
-            N, M, roll_history, roll = dice.roll_dice(request)
-            # Format the reply
-            reply = f"You rolled {N}d{M} and got {roll} ({roll_history})"
-            await message.channel.send(reply)
-            return
-
         # Admin commands
-        if request == "setcity":
+        if request.startswith("setcity"):
             # Check if user is admin
             if message.author.guild_permissions.administrator:
                 # Get city
@@ -363,7 +354,7 @@ async def on_message(message):
                 await message.channel.send(f"{message.author.mention} You don't have permission to do that.")
                 return
         
-        if request == "setcountry":
+        if request.startswith("setcountry"):
             # Check if user is admin
             if message.author.guild_permissions.administrator:
                 # Get country
@@ -376,7 +367,7 @@ async def on_message(message):
                 await message.channel.send(f"{message.author.mention} You don't have permission to do that.")
                 return
 
-        if request == "setnewschannel":
+        if request.startswith("setnewschannel"):
             # Check if user is admin
             if message.author.guild_permissions.administrator:
                 # news channel set to current channel
@@ -386,5 +377,14 @@ async def on_message(message):
             else:
                 await message.channel.send(f"{message.author.mention} You don't have permission to do that.")
                 return
+        
+            # Check if the request is a valid dice roll
+        if dice.is_valid_dice_format(request):
+            # Roll the dice
+            N, M, roll_history, roll = dice.roll_dice(request)
+            # Format the reply
+            reply = f"You rolled {N}d{M} and got {roll} ({roll_history})"
+            await message.channel.send(reply)
+            return
 
 client.run(TOKEN)
