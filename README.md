@@ -1,6 +1,6 @@
 # Discord-Bot
 
-My instance of this bot is hosted on a cheap VPS with a low bandwidth cap and as such it is only availible for private use. Feel free, to fork this program for your own bot instance.
+My instance of this bot is currently hosted on a VPS with a low bandwidth cap and as such it is only availible for private use. Please contact me if you are interested in trying this bot in your server. Feel free, to fork this program for your own bot instance instead.
 
 ## Usage
 
