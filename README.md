@@ -12,17 +12,19 @@ Commands are all prefixed with `!`. The bot will ignore any messages that do not
 
 ### Game Commands
 
-`!game` is replied to with a list of all the available game commands. These commands are used to play games with the bot. For example, `!trivia` will send a random trivia question and the bot will wait for a response. The bot will then reply with whether the answer was correct or not.
+`!games` is replied to with a list of all the available game commands. Users can create a game account with `!start`. This will create an account with a starting balance. The user can then use `!points` to check their balance. Games like `!trivia` and `!wordscramble` are give points to the user if they win. Users can also gamble their points with commands like `!roulette` and `!slots`.
 
-### Gambling Commands
-
-`!gamble` is replied to with a list of all the available gambling commands. These commands are used to gamble with the bot. For example, `!roulette [red|black|green] [amount]` will wager the specified amount on the specified color. The bot will then reply with whether the wager was successful or not.
-
-Users can create a gambling account with `!start`. This will create an account with a starting balance. The user can then use `!points` to check their balance.
-
-### Utility
+### Utility Commands
 
 `!utility` is replied to with a list of all the available utility commands. These commands are used to perform various tasks. For example, `!weather [location] [info|now|hour (0-47)|day (0-7)]` will send weather information for the specified location and time. The bot will then reply with the requested information.
+
+### Scheduled ACtions
+
+`!schedule` is replied to with a list of all of the bot's scheduled actions. When configured the weather and news for the locations set by the admin will be sent to a channel set by the admin.
+
+### Admin Commands
+
+`!admin` is replied to with a list of all the available admin commands. These commands are used to perform various tasks exclusive to the server admin. These are used to configure scheduled commands.
 
 ## License
 

@@ -110,7 +110,7 @@ async def on_message(message):
             await message.channel.send(messages.get_content())
             return
 
-        if request == "game":
+        if request == "games":
             await message.channel.send(messages.get_game())
             return
 
