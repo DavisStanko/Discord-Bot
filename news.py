@@ -1,36 +1,33 @@
-import csv
+import json
 import requests
+import settings
 
 FILENAME = "settings.csv"
 
-def get_news_location(guild):
-    with open(FILENAME, 'r') as file:
-        reader = csv.reader(file)
-        next(reader)
-        for row in reader:
-            if row[1] == str(guild):
-                country_code = row[3]
-                return country_code
-
-def get_news(news_location, NEWS_API_KEY):
-    news = f"https://newsdata.io/api/1/news?apikey={NEWS_API_KEY}&country={news_location}"
+def get_news(country_code, NEWS_API_KEY):
+    news = f"https://newsdata.io/api/1/news?apikey={NEWS_API_KEY}&country={country_code}"
+    print(news)
     response = requests.get(news)
-    data = response.json()
+    data = json.loads(response.text)
     return data
 
 def parse_news(data):
-    # get first 3 news articles' links
-    articles = data["results"]
+    #get the links
+    data = data["results"]
     links = []
-    for article in range(3):
-        links.append(articles[article]["link"])
-    return links
+    for i in range(3):
+        links.append(data[i]["link"])
+    return links    
 
 def main(guild, NEWS_API_KEY): 
-    # get guild's news location
-    news_location = get_news_location(guild)
-    news = get_news(news_location, NEWS_API_KEY)
+    country_code = settings.get_country(guild)
+    print(country_code)
+    news = get_news(country_code, NEWS_API_KEY)
+    print(news)
     parsed_news = parse_news(news)
+    print(parsed_news)
     split_news = "\n".join(parsed_news)
-    news_report = f"Here are the top 3 news right now:\n{split_news}"
+    print(split_news)
+    news_report = f"Here are the top 3 news stories right now:\n{split_news}"
+    print(news_report)
     return news_report

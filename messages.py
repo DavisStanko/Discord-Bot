@@ -7,7 +7,16 @@ def get_help():
             "`!game` - Lists game commands.\n" \
             "`!utility` - Lists utility commands.\n" \
             "`!schedule` - Explains scheduled events.\n" \
+            "`!admin` - Lists admin commands.\n"
             
+    return reply
+
+def get_admin():
+    reply = "I react to the following admin commands:\n" \
+            "`!setcity [city]` - Sets the city for the server.\n" \
+            "`!setcountry [country]` - Sets the country for the server.\n" \
+            "`!setnewschannel` - Sets the channel for news reports to the current channel.\n"
+    
     return reply
 
 def get_utility():

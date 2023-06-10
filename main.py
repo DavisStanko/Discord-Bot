@@ -46,8 +46,8 @@ async def on_ready():
         # Get current unix timestamp
         current_time = int(datetime.datetime.now().timestamp())
 
-        # Get the unix timestamp of the next trigger point 12am 6am 12pm 6pm
-        next_trigger = current_time + (3600 - (current_time % 3600))
+        # Get the unix timestamp of the next trigger point (6 hours)
+        next_trigger = current_time + (21600 - (current_time % 21600))
 
         # Get the time to sleep
         time_to_sleep = next_trigger - current_time
@@ -59,15 +59,20 @@ async def on_ready():
         # For each guild
         for guild in client.guilds:
             # Get the news channel
-            news_channel = settings.get_news_channel(guild)
+            news_channel = settings.get_news_channel(guild.id)
 
             if news_channel is not None:
                 # Get the weather data
-                weather_data = weather.main(guild, WEATHER_API_KEY)
+                weather_data = weather.main(guild.id, WEATHER_API_KEY)
                 # Get the news data
-                news_data = news.main(guild, NEWS_API_KEY)
-                # send to news channel
+                news_data = news.main(guild.id, NEWS_API_KEY)
+                # Get the news channel
+                news_channel = settings.get_news_channel(guild.id)
+                # convert news channel id to channel object
+                news_channel = client.get_channel(int(news_channel))
+                # Send the weather data
                 await news_channel.send(weather_data)
+                # Send the news data
                 await news_channel.send(news_data)
 
 @client.event
@@ -87,6 +92,15 @@ async def on_message(message):
         if request == "help":
             await message.channel.send(messages.get_help())
             return
+
+        if request == "admin":
+            # Check if user is admin
+            if message.author.guild_permissions.administrator:
+                await message.channel.send(messages.get_admin())
+                return
+            else:
+                await message.channel.send(f"{message.author.mention} You are not the admin!")
+                return
 
         if request == "utility":
             await message.channel.send(messages.get_utility())
@@ -334,5 +348,43 @@ async def on_message(message):
             reply = f"You rolled {N}d{M} and got {roll} ({roll_history})"
             await message.channel.send(reply)
             return
+
+        # Admin commands
+        if request == "setcity":
+            # Check if user is admin
+            if message.author.guild_permissions.administrator:
+                # Get city
+                city = request.split(" ")[1]
+                # Set city
+                settings.set_city(message.guild.id, city)
+                await message.channel.send(f"{message.author.mention} City set to {city}")
+                return
+            else:
+                await message.channel.send(f"{message.author.mention} You don't have permission to do that.")
+                return
+        
+        if request == "setcountry":
+            # Check if user is admin
+            if message.author.guild_permissions.administrator:
+                # Get country
+                country = request.split(" ")[1]
+                # Set country
+                settings.set_country(message.guild.id, country)
+                await message.channel.send(f"{message.author.mention} Country set to {country}")
+                return
+            else:
+                await message.channel.send(f"{message.author.mention} You don't have permission to do that.")
+                return
+
+        if request == "setnewschannel":
+            # Check if user is admin
+            if message.author.guild_permissions.administrator:
+                # news channel set to current channel
+                settings.set_news_channel(message.guild.id, message.channel.id)
+                await message.channel.send(f"{message.author.mention} News channel set to {message.channel.mention}")
+                return
+            else:
+                await message.channel.send(f"{message.author.mention} You don't have permission to do that.")
+                return
 
 client.run(TOKEN)

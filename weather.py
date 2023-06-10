@@ -1,21 +1,13 @@
 import requests
 import json
 from datetime import datetime
-import csv
+import settings
 
 FILENAME = "settings.csv"
 
-def get_city(guild):
-    # read the city from the settings file for the guild
-    with open('settings.csv', 'r') as file:
-        reader = csv.reader(file)
-        for row in reader:
-            if row[1] == str(guild):
-                return row[2]
-
 def main(guild, WEATHER_API_KEY):
     # read the city from the settings file for the guild
-    city = get_city(guild)
+    city = settings.get_city(guild)
     # get the coordinates of the city
     lat, lon = get_coordinates(city, WEATHER_API_KEY)
     # get the weather data
@@ -75,7 +67,7 @@ def current_weather(data):
     sunrise = datetime.fromtimestamp(sunrise).strftime("%#I:%M %p")
     sunset = datetime.fromtimestamp(sunset).strftime("%#I:%M %p")
 
-    return f"\nSunrise: {sunrise}\nSunset: {sunset}\nTemperature: {temp}°C\nFeels Like: {feels_like}°C\nPressure: {pressure} hPa\nHumidity: {humidity}%\nDew Point: {dew_point}°C\nUV Index: {uvi}\nClouds: {clouds}%\nVisibility: {visibility} meters\nWind Speed: {wind_speed} m/s\nWind Direction: {wind_deg}°\nWeather: {weather}"
+    return f"Sunrise: {sunrise}\nSunset: {sunset}\nTemperature: {temp}°C\nFeels Like: {feels_like}°C\nPressure: {pressure} hPa\nHumidity: {humidity}%\nDew Point: {dew_point}°C\nUV Index: {uvi}\nClouds: {clouds}%\nVisibility: {visibility} meters\nWind Speed: {wind_speed} m/s\nWind Direction: {wind_deg}°\nWeather: {weather}"
     
 def hour_weather(data, hour):
     reply = ""
