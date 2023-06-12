@@ -1,4 +1,4 @@
-import media
+from commands import media
 
 def get_help():
     reply = "I can help you with the following commands:\n" \
