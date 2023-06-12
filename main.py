@@ -4,9 +4,10 @@ import discord
 from dotenv import load_dotenv
 import asyncio
 import datetime
+import asyncpraw
+from asyncprawcore.exceptions import Forbidden
 
 # Import custom modules
-from commands import content
 from commands import dice
 from commands import messages
 from commands import news
@@ -14,6 +15,7 @@ from commands import points
 from commands import settings
 from commands import trivia
 from commands import weather
+from commands import media
 
 load_dotenv()
 TOKEN = os.getenv('DISCORD_TOKEN')
@@ -21,6 +23,8 @@ SERVER = os.getenv('DISCORD_SERVER')
 ADMIN = os.getenv('DISCORD_ADMIN')
 WEATHER_API_KEY = os.getenv('WEATHER_API_KEY')
 NEWS_API_KEY = os.getenv('NEWS_API_KEY')
+REDDIT_CLIENT_ID = os.getenv('REDDIT_CLIENT_ID')
+REDDIT_CLIENT_SECRET = os.getenv('REDDIT_CLIENT_SECRET')
 
 NOUNS = "nouns.txt"
 
@@ -121,6 +125,31 @@ async def on_message(message):
         if request == "info":
             await message.channel.send(messages.get_info())
             return
+        
+        # Reddit
+        if request in media.get_commands():
+            # Create a reddit instance
+            reddit = asyncpraw.Reddit(
+                client_id=REDDIT_CLIENT_ID,
+                client_secret=REDDIT_CLIENT_SECRET,
+                user_agent="Discord Bot"
+            )
+
+            # Get the subreddits
+            subreddits = media.get_commands()[request]
+
+            try:
+                # Get a random subreddit from the list
+                subreddit = await reddit.subreddit(random.choice(subreddits))
+                # Get a random post from the subreddit
+                post = await subreddit.random()
+                # Format the reply
+                reply = f"{post.title}\n{post.url}"
+                await message.channel.send(reply)
+            # If the subreddit is private
+            except Forbidden:
+                await message.channel.send(f"{message.author.mention} Unable to access subreddit or post from r/{subreddit}. Subreddit may be private.")
+
 
         # Trivia
         if request == "trivia":
@@ -332,13 +361,6 @@ async def on_message(message):
                 points.add_points(message.author.id, -int(wager))
                 await message.channel.send(f"{message.author.mention} You lose! The wheel landed on | {wheel[0]} {wheel[1]} {wheel[2]} |")
                 return
-
-        # Content
-        if request in content.get_commands():
-            reply = content.get_file(request)
-                        
-            await message.channel.send(f"Here is your {request}!", file=discord.File(reply))
-            return
 
         # Admin commands
         if request.startswith("setcity"):

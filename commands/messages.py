@@ -1,4 +1,4 @@
-import content
+import media
 
 def get_help():
     reply = "I can help you with the following commands:\n" \
@@ -26,7 +26,8 @@ def get_utility():
     return reply
 
 def get_content():
-    reply = f"I react to the following content commands by sending a random media file from the specified directory:\n{content.get_commands()}"
+    content_commands = "\n".join([f"`!{key}`" for key in media.get_commands()])
+    reply = f"I react to the following content commands by sending a random media file from the specified directory:\n{content_commands}"
     return reply
 
 def get_game():
