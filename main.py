@@ -1,21 +1,14 @@
-import os
-import random
-import discord
-from dotenv import load_dotenv
 import asyncio
-import datetime
 import asyncpraw
 from asyncprawcore.exceptions import Forbidden
+import datetime
+import discord
+from dotenv import load_dotenv
+import os
+import random
 
 # Import custom modules
-from commands import dice
-from commands import messages
-from commands import news
-from commands import points
-from commands import settings
-from commands import trivia
-from commands import weather
-from commands import media
+from commands import dice, media, messages, news, points, settings, trivia, weather
 
 load_dotenv()
 TOKEN = os.getenv('DISCORD_TOKEN')
@@ -25,6 +18,8 @@ WEATHER_API_KEY = os.getenv('WEATHER_API_KEY')
 NEWS_API_KEY = os.getenv('NEWS_API_KEY')
 REDDIT_CLIENT_ID = os.getenv('REDDIT_CLIENT_ID')
 REDDIT_CLIENT_SECRET = os.getenv('REDDIT_CLIENT_SECRET')
+
+STARTING_POINTS = 1000
 
 NOUNS = "nouns.txt"
 
@@ -47,22 +42,14 @@ async def on_ready():
 
     # Control weather and news updates
     while True:
-        # Get current unix timestamp
-        current_time = int(datetime.datetime.now().timestamp())
-
-        # Get the unix timestamp of the next trigger point (6 hours)
-        next_trigger = current_time + (21600 - (current_time % 21600))
-
-        # Get the time to sleep
-        time_to_sleep = next_trigger - current_time
-
         # Sleep until the next trigger point
-        print(f"Sleeping for {time_to_sleep} seconds")
+        current_time = int(datetime.datetime.now().timestamp())
+        next_trigger = current_time + (21600 - (current_time % 21600))
+        time_to_sleep = next_trigger - current_time
         await asyncio.sleep(time_to_sleep)
 
         # For each guild
         for guild in client.guilds:
-            # Get the news channel
             news_channel = settings.get_news_channel(guild.id)
 
             if news_channel is not None:
@@ -70,64 +57,47 @@ async def on_ready():
                 weather_data = weather.main(guild.id, WEATHER_API_KEY)
                 # Get the news data
                 news_data = news.main(guild.id, NEWS_API_KEY)
-                # Get the news channel
-                news_channel = settings.get_news_channel(guild.id)
-                # convert news channel id to channel object
-                news_channel = client.get_channel(int(news_channel))
-                # Send the weather data
-                await news_channel.send(weather_data)
-                # Send the news data
-                await news_channel.send(news_data)
+                # Convert the news channel ID to an object
+                news_channel_obj = client.get_channel(int(news_channel))
+                # Send the weather and news data to the news channel
+                await news_channel_obj.send(weather_data)
+                await news_channel_obj.send(news_data)
 
 @client.event
 async def on_message(message):
-    # Get the request
-    request = message.content.lower()
-
-    # If message is from the bot, ignore
+    # If message is from the bot, ignore 
     if message.author == client.user:
         return
 
     # If message is a command
-    elif request.startswith('!'):        
-        # Remove the '!' from the request
-        request = request[1:]
+    if message.content.startswith('!'):        
+        # Remove the '!' from the request and make it case insensitive
+        request = message.content[1:].lower()
 
-        if request == "help":
-            await message.channel.send(messages.get_help())
+        # Map help commands
+        message_commands = {
+            "help": messages.get_help(),
+            "admin": messages.get_admin(),
+            "utility": messages.get_utility(),
+            "content": messages.get_content(),
+            "games": messages.get_game(),
+            "schedule": messages.get_schedule(),
+            "info": messages.get_info(),
+        }
+
+        # Send the help message if sufficient permissions are met
+        if request == "admin" and message.author.id != ADMIN:
+            await message.channel.send(f"{message.author.mention} You do not have permission to use this command.")
             return
-
-        if request == "admin":
-            # Check if user is admin
-            if message.author.guild_permissions.administrator:
-                await message.channel.send(messages.get_admin())
-                return
-            else:
-                await message.channel.send(f"{message.author.mention} You are not the admin!")
-                return
-
-        if request == "utility":
-            await message.channel.send(messages.get_utility())
-            return
-
-        if request == "content":
-            await message.channel.send(messages.get_content())
-            return
-
-        if request == "games":
-            await message.channel.send(messages.get_game())
-            return
-
-        if request == "schedule":
-            await message.channel.send(messages.get_schedule())
-            return
-
-        if request == "info":
-            await message.channel.send(messages.get_info())
+        elif request in message_commands:
+            await message.channel.send(message_commands[request])
             return
         
         # Reddit
         if request in media.get_commands():
+            # Get the subreddits associated with the command
+            subreddits = media.get_commands()[request]
+
             # Create a reddit instance
             reddit = asyncpraw.Reddit(
                 client_id=REDDIT_CLIENT_ID,
@@ -135,20 +105,18 @@ async def on_message(message):
                 user_agent="Discord Bot"
             )
 
-            # Get the subreddits
-            subreddits = media.get_commands()[request]
-
             try:
-                # Get a random subreddit from the list
+                # Get a random subreddit and post
                 subreddit = await reddit.subreddit(random.choice(subreddits))
-                # Get a random post from the subreddit
                 post = await subreddit.random()
-                # Format the reply
+
+                # Send the post
                 reply = f"{post.title}\n{post.url}"
                 await message.channel.send(reply)
+
             # If the subreddit is private
             except Forbidden:
-                await message.channel.send(f"{message.author.mention} Unable to access subreddit or post from r/{subreddit}. Subreddit may be private.")
+                await message.channel.send(f"{message.author.mention} Unable to access r/{subreddit}. Subreddit may be private.")
 
 
         # Trivia
@@ -158,12 +126,13 @@ async def on_message(message):
                 await message.channel.send(f"{message.author.mention} You need to create an account first! Use !start")
                 return
             
+            # Get trivia question and answers
             answers, correct_answer, reply = trivia.get_random_question()
 
             # Send the question and ping the user
             await message.channel.send(f"{message.author.mention}\n{reply}")
             
-            # Check if the answer is correct
+            # Check if a message is a valid answer and sent from the asker
             def check_answer(m):
                 return (
                     m.author == message.author
@@ -195,24 +164,20 @@ async def on_message(message):
                 await message.channel.send(f"{message.author.mention} You need to create an account first! Use !start")
                 return
             
-            # Open nouns
+            # Open nouns file and get a random word
             with open(NOUNS, "r") as f:
-                nouns = f.readlines()
-                random_line = random.randint(0, len(nouns) - 1)
-                word = nouns[random_line].strip()
+                word = random.choice(f).strip()
 
             # Get length of word
             word_length = len(word)
 
             # randomize the positions of the letters
-            prompt = list(word)
-            random.shuffle(prompt)
-            prompt = "".join(prompt)
+            prompt = "".join(random.sample(word, len(word)))
 
             # Send the word and ping the user
             await message.channel.send(f"{message.author.mention}\nUnscramble the word in 30 seconds: {prompt}")
 
-            # Check if the answer is correct
+            # Check if the message is a valid answer and sent from the asker
             def check_answer(m):
                 return (
                     m.author == message.author
@@ -237,7 +202,6 @@ async def on_message(message):
 
         # Start gambling
         if request == "start":
-            STARTING_POINTS = 1000
             new_account = points.add_user(message.author.id, STARTING_POINTS)
             # Check if the account was created
             if not new_account:
@@ -265,21 +229,12 @@ async def on_message(message):
                 await message.channel.send(f"{message.author.mention} You need to create an account first! Use !start")
                 return
 
-            # Get current unix timestamp
-            current_time = current_timestamp = int(datetime.datetime.now().timestamp())
-            
-            # Compare to last income timestamp
+            # Get current and last income timestamp
+            current_time = int(datetime.datetime.now().timestamp())
             last_income = points.get_last_income(message.author.id)
             
-            # If it's been 30 minutes since last income
-            if current_time - last_income >= 1800:
-                # Add 100 points
-                points.add_points(message.author.id, 100)
-                # Update last income timestamp
-                points.set_last_income(message.author.id, current_time)
-                await message.channel.send(f"{message.author.mention} You've received 100 points!")
-                return
-            else:
+            # If it hasn't been 30 minutes since last income
+            if current_time - last_income < 1800:
                 # get time left until 30 minutes is up
                 time_left = 1800 - (current_time - last_income)
                 # convert to minutes and seconds
@@ -288,6 +243,13 @@ async def on_message(message):
                 await message.channel.send(f"{message.author.mention} You can't collect income yet! Try again in {minutes} minutes and {seconds} seconds.")
                 return
 
+            # Add 100 points
+            points.add_points(message.author.id, 100)
+            # Update last income timestamp
+            points.set_last_income(message.author.id, current_time)
+            await message.channel.send(f"{message.author.mention} You've received 100 points!")
+            return
+
         # Roulette
         if request.startswith("roulette"):
             # Check if user has an account
@@ -295,40 +257,43 @@ async def on_message(message):
                 await message.channel.send(f"{message.author.mention} You need to create an account first! Use !start")
                 return
 
-            # Get wager
-            wager = request.split(" ")[1]
-            # Check that it's a positive integer
+            # Extract wager and user choice
+            _, wager, user_choice = request.split()
+            
+            # Check that the wager is an integer
             if not wager.isdigit():
                 await message.channel.send(f"{message.author.mention} Invalid wager.")
                 return
-            # Check that the user has enough points
+            
+            wager = int(wager)
             user_points = points.get_points(message.author.id)
-            if int(wager) > user_points:
-                await message.channel.send(f"{message.author.mention} You don't have enough points.")
+
+            # Check that the user has enough points
+            if wager > user_points:
+                await message.channel.send(f"{message.author.mention} You don't have enough points!")
                 return
-            # Play the game
+            
+            # Define roulette options
             options = ["red", "black", "green"]
-            # Check user's choice
-            user_choice = request.split(" ")[2]
+
+            # Check if the user's choice is valid
             if user_choice not in options:
                 await message.channel.send(f"{message.author.mention} Invalid choice.")
                 return
+            
             # Spin the wheel
             wheel = random.choices(options, weights=[18, 18, 2], k=1)[0]
+
             # Check if the user won
             if user_choice == wheel:
-                if user_choice == "green":
-                    points.add_points(message.author.id, int(wager) * 14)
-                else:
-                    points.add_points(message.author.id, int(wager))
-                await message.channel.send(f"{message.author.mention} You win! The wheel landed on {wheel}!")
-                return
-            # Check if the bot won
+                # Calculate winnings and add to user's points
+                winnings = wager * 14 if wheel == "green" else wager
+                points.add_points(message.author.id, winnings)
+                await message.channel.send(f"{message.author.mention} You won {winnings} points!")
             else:
-                points.add_points(message.author.id, -int(wager))
-                await message.channel.send(f"{message.author.mention} You lose! The wheel landed on {wheel}!")
-                return
-        
+                points.add_points(message.author.id, -wager)
+                await message.channel.send(f"{message.author.mention} You lost {wager} points!")
+
         # Slots
         if request.startswith("slots"):
             # Check if user has an account
@@ -336,71 +301,70 @@ async def on_message(message):
                 await message.channel.send(f"{message.author.mention} You need to create an account first! Use !start")
                 return
             
-            # Get wager
-            wager = request.split(" ")[1]
-            # Check that it's a positive integer
+            # Extract wager
+            _, wager = request.split()
+
+            # Check that the wager is an integer
             if not wager.isdigit():
                 await message.channel.send(f"{message.author.mention} Invalid wager.")
                 return
-            # Check that the user has enough points
+            
+            wager = int(wager)
             user_points = points.get_points(message.author.id)
-            if int(wager) > user_points:
-                await message.channel.send(f"{message.author.mention} You don't have enough points.")
+
+            # Check that the user has enough points
+            if wager > user_points:
+                await message.channel.send(f"{message.author.mention} You don't have enough points!")
                 return
-            # Play the game
-            options = ["1", "2", "3", "4", "5"]
+            
+            # Define slot symbols
+            symbols = ["1", "2", "3", "4", "5"]
+
             # Spin the wheel
-            wheel = random.choices(options, weights=[1, 1, 1, 1, 1], k=3)
+            wheel = random.choices(symbols, weights=[1, 1, 1, 1, 1], k=3)
+
             # Check if the user won
             if wheel[0] == wheel[1] == wheel[2]:
                 points.add_points(message.author.id, int(wager) * 20)
                 await message.channel.send(f"{message.author.mention} You win! The wheel landed on | {wheel[0]} {wheel[1]} {wheel[2]} |")
                 return
-            # Check if the bot won
             else:
                 points.add_points(message.author.id, -int(wager))
                 await message.channel.send(f"{message.author.mention} You lose! The wheel landed on | {wheel[0]} {wheel[1]} {wheel[2]} |")
                 return
 
         # Admin commands
-        if request.startswith("setcity"):
-            # Check if user is admin
-            if message.author.guild_permissions.administrator:
-                # Get city
-                city = request.split(" ")[1]
-                # Set city
-                settings.set_city(message.guild.id, city)
-                await message.channel.send(f"{message.author.mention} City set to {city}")
-                return
-            else:
-                await message.channel.send(f"{message.author.mention} You don't have permission to do that.")
-                return
-        
-        if request.startswith("setcountry"):
-            # Check if user is admin
-            if message.author.guild_permissions.administrator:
-                # Get country
-                country = request.split(" ")[1]
-                # Set country
-                settings.set_country(message.guild.id, country)
-                await message.channel.send(f"{message.author.mention} Country set to {country}")
-                return
-            else:
-                await message.channel.send(f"{message.author.mention} You don't have permission to do that.")
-                return
+        admin_commands = ["setcity", "setcountry", "setnewschannel"]
 
-        if request.startswith("setnewschannel"):
-            # Check if user is admin
-            if message.author.guild_permissions.administrator:
-                # news channel set to current channel
-                settings.set_news_channel(message.guild.id, message.channel.id)
-                await message.channel.send(f"{message.author.mention} News channel set to {message.channel.mention}")
-                return
-            else:
-                await message.channel.send(f"{message.author.mention} You don't have permission to do that.")
-                return
+        for command in admin_commands:
+            if request.startswith(command):
+                # Check if user is admin
+                if not message.author.guild_permissions.administrator:
+                    await message.channel.send(f"{message.author.mention} You don't have permission to do that.")
+                    return
+
+                # get argument
+                argument = request.split(" ")[1]
+
+                # set city
+                if command == "setcity":
+                    settings.set_city(message.guild.id, argument)
+                    await message.channel.send(f"{message.author.mention} City set to {argument}")
+                    return
+                
+                # set country
+                if command == "setcountry":
+                    settings.set_country(message.guild.id, argument)
+                    await message.channel.send(f"{message.author.mention} Country set to {argument}")
+                    return
+                
+                # set news channel
+                if command == "setnewschannel":
+                    settings.set_news_channel(message.guild.id, argument)
+                    await message.channel.send(f"{message.author.mention} News channel set to {argument}")
+                    return
         
-            # Check if the request is a valid dice roll
+        # Check if the request is a valid dice roll
         if dice.is_valid_dice_format(request):
             # Roll the dice
             N, M, roll_history, roll = dice.roll_dice(request)
