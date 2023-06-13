@@ -32,14 +32,14 @@ def get_content():
 
 def get_game():
     reply = f"I react to the following game commands:\n" \
-            "`!start` - **Creates a new account** with 1000 points.\n" \
-            "`!points` - Displays your current points.\n" \
-            "`!leaderboard` - Displays the top 10 users by points.\n" \
-            "`!income` - Gives you 100 points. Can only be used once every 30 minutes.\n" \
-            "`!trivia` - Starts a game of trivia. Correct answers give you 10 points.\n" \
-            "`!wordscramble` - Starts a game of word scramble. Correct answers give you 10 points per letter.\n" \
-            "`!roulette [wager] [red|black|green]` - Plays a game of roulette.\n" \
-            "`!slots [wager]` - Plays a game of slots.\n"
+            "`!start` - **Create a new account** with 1000 points.\n" \
+            "`!points` - Display your current points.\n" \
+            "`!leaderboard` - Display the top 10 users.\n" \
+            "`!income` - Gain 100 points. Can only be used once every 30 minutes.\n" \
+            "`!trivia` - Start a game of trivia. Correct answers give you 10 points.\n" \
+            "`!wordscramble` - Start a game of word scramble. Correct answers give you 10 points per letter.\n" \
+            "`!roulette [wager] [red|black|green]` - Play a game of roulette.\n" \
+            "`!slots [wager]` - Play a game of slots.\n"
     return reply
 
 def get_info():
