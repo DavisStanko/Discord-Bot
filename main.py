@@ -89,7 +89,7 @@ async def on_message(message):
         }
 
         # Send the help message if sufficient permissions are met
-        if request == "admin" and message.author.id != ADMIN:
+        if request == "admin" and not message.author.guild_permissions.administrator:
             await message.channel.send(f"{message.author.mention} You do not have permission to use this command.")
             return
         elif request in message_commands:
