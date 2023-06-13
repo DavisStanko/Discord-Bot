@@ -1,9 +1,4 @@
-# modularize more
-# move reutnrs down with the help of else blocks
-
 import asyncio
-import asyncpraw
-from asyncprawcore.exceptions import Forbidden
 import datetime
 import discord
 from dotenv import load_dotenv
@@ -16,7 +11,6 @@ from commands import dice, media, messages, news, points, settings, trivia, weat
 load_dotenv()
 TOKEN = os.getenv('DISCORD_TOKEN')
 SERVER = os.getenv('DISCORD_SERVER')
-ADMIN = os.getenv('DISCORD_ADMIN')
 WEATHER_API_KEY = os.getenv('WEATHER_API_KEY')
 NEWS_API_KEY = os.getenv('NEWS_API_KEY')
 REDDIT_CLIENT_ID = os.getenv('REDDIT_CLIENT_ID')
@@ -68,13 +62,17 @@ async def on_ready():
 
 @client.event
 async def on_message(message):
+    # Check if the bot has permissions to send messages
+    if not message.channel.permissions_for(message.guild.me).send_messages:
+        return
+
     # If message is from the bot, ignore 
     if message.author == client.user:
         return
 
     # If message is a command
     if message.content.startswith('!'):        
-        # Remove the '!' from the request and make it case insensitive
+        # Get the command
         request = message.content[1:].lower()
 
         # Map help commands
@@ -98,29 +96,14 @@ async def on_message(message):
         
         # Reddit
         if request in media.get_commands():
-            # Get the subreddits associated with the command
-            subreddits = media.get_commands()[request]
+            post, subreddit = await media.get_post(request, REDDIT_CLIENT_ID, REDDIT_CLIENT_SECRET)
 
-            # Create a reddit instance
-            reddit = asyncpraw.Reddit(
-                client_id=REDDIT_CLIENT_ID,
-                client_secret=REDDIT_CLIENT_SECRET,
-                user_agent="Discord Bot"
-            )
-
-            try:
-                # Get a random subreddit and post
-                subreddit = await reddit.subreddit(random.choice(subreddits))
-                post = await subreddit.random()
-
-                # Send the post
-                reply = f"{post.title}\n{post.url}"
-                await message.channel.send(reply)
-
-            # If the subreddit is private
-            except Forbidden:
+            # Check if the post is valid
+            if post is None:
                 await message.channel.send(f"{message.author.mention} Unable to access r/{subreddit}. Subreddit may be private.")
-
+            else:
+                await message.channel.send(post)
+            return
 
         # Trivia
         if request == "trivia":
