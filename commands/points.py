@@ -85,4 +85,28 @@ def set_last_income(userID, timestamp):
             if row[1] == str(userID):
                 row[3] = str(timestamp)  # Convert back to string for writing to CSV
             writer.writerow(row)
-            
+
+def get_top_users(number):
+    # Load all rows from the CSV file
+    with open(FILENAME, 'r') as file:
+        reader = csv.reader(file)
+        next(reader)  # Skip header row
+
+        # Sort rows by points
+        rows = sorted(reader, key=lambda x: int(x[2]), reverse=True)
+
+        # get top number of rows
+        top_rows = rows[:number]
+
+        # get user ids
+        top_users = []
+        for row in top_rows:
+            top_users.append(row[1])
+
+        # get points
+        top_points = []
+        for row in top_rows:
+            top_points.append(int(row[2]))
+
+        # return
+        return top_users, top_points

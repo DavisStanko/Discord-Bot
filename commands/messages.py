@@ -34,6 +34,7 @@ def get_game():
     reply = f"I react to the following game commands:\n" \
             "`!start` - **Creates a new account** with 1000 points.\n" \
             "`!points` - Displays your current points.\n" \
+            "`!leaderboard` - Displays the top 10 users by points.\n" \
             "`!income` - Gives you 100 points. Can only be used once every 30 minutes.\n" \
             "`!trivia` - Starts a game of trivia. Correct answers give you 10 points.\n" \
             "`!wordscramble` - Starts a game of word scramble. Correct answers give you 10 points per letter.\n" \

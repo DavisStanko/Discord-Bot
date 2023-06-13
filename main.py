@@ -1,3 +1,6 @@
+# modularize more
+# move reutnrs down with the help of else blocks
+
 import asyncio
 import asyncpraw
 from asyncprawcore.exceptions import Forbidden
@@ -332,6 +335,25 @@ async def on_message(message):
                 points.add_points(message.author.id, -int(wager))
                 await message.channel.send(f"{message.author.mention} You lose! The wheel landed on | {wheel[0]} {wheel[1]} {wheel[2]} |")
                 return
+        
+        # Leaderboard
+        if request == "leaderboard":
+            # Get top 10 users
+            top_users, top_points = points.get_top_users(10)
+
+            # Convert user IDs to discord users
+            for i, user in enumerate(top_users):
+                discord_user = await client.fetch_user(user)
+                if discord_user:
+                    top_users[i] = discord_user.name
+                else:
+                    top_users[i] = "Unknown User"
+
+            # Combine users and points
+            top_users = [f"{top_users[i]} - {top_points[i]} points" for i in range(len(top_users))]
+
+            await message.channel.send(f"```{chr(10).join(top_users)}```")
+            return
 
         # Admin commands
         admin_commands = ["setcity", "setcountry", "setnewschannel"]
