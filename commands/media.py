@@ -5,7 +5,7 @@ import random
 def get_commands():
     # Define a dictionary of commands and their subreddits
     commands = {
-        "meme": ["meme", "memes", "dankmemes", "AdviceAnimals"],
+        "meme": ["meme", "memes", "dankmemes"],
         "animal": ["aww", "eyebleach", "animalsbeingderps", "AnimalsBeingJerks"],
         "meirl": ["me_irl", "meirl", "2meirl4meirl"],
         "wholesome": ["wholesomememes", "MadeMeSmile", "HumansBeingBros"],
