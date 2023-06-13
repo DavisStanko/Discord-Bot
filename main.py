@@ -127,20 +127,17 @@ async def on_message(message):
     elif command in media.get_commands():
         post, subreddit = await media.get_post(request, REDDIT_CLIENT_ID, REDDIT_CLIENT_SECRET)
 
-        # Check if the post is valid
-        if post is None:
-            await message.channel.send(f"{message.author.mention} Unable to access r/{subreddit}. Subreddit may be private.")
-        else:
-            await message.channel.send(post)
+        # Check for errors
+        response = (f"{message.author.mention} Unable to access r/{subreddit}. Subreddit may be private.") if post is None else post
+        await message.channel.send(response)
 
     # Create an account
     elif command == "start":
         new_account = points.add_user(message.author.id, STARTING_POINTS)
+
         # Check if the account was created
-        if not new_account:
-            await message.channel.send(f"{message.author.mention} You already have an account!")
-        else:
-            await message.channel.send(f"{message.author.mention} Your account has been created!")
+        response = f"{message.author.mention} You already have an account!" if not new_account else f"{message.author.mention} Account created! You have {STARTING_POINTS} points."
+        await message.channel.send(response)
 
     # Leaderboard
     elif command == "leaderboard":
@@ -162,22 +159,19 @@ async def on_message(message):
 
             # Income
             elif command == "income":
-                # Get current and last income timestamp
                 current_time = int(datetime.datetime.now().timestamp())
                 last_income = points.get_last_income(message.author.id)
                 
                 # If it hasn't been 30 minutes since last income
                 if current_time - last_income < 1800:
-                    # get time left until 30 minutes is up
+                    # get time left until next income
                     time_left = 1800 - (current_time - last_income)
                     # convert to minutes and seconds
-                    minutes = time_left // 60
-                    seconds = time_left % 60
+                    minutes, seconds = divmod(time_left, 60)
                     await message.channel.send(f"{message.author.mention} You can't collect income yet! Try again in {minutes} minutes and {seconds} seconds.")
                 else:
-                    # Add 100 points
+                    # Add 100 points and set the last income time
                     points.add_points(message.author.id, 100)
-                    # Update last income timestamp
                     points.set_last_income(message.author.id, current_time)
                     await message.channel.send(f"{message.author.mention} You've received 100 points!")
 
