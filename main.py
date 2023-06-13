@@ -94,7 +94,7 @@ async def on_message(message):
         command = message_commands[request]
         await message.channel.send(command())
     
-    # Account commands
+    # Admin commands
     elif command in admin_commands:
         # Check if the user is an admin
         if not message.author.guild_permissions.administrator:
