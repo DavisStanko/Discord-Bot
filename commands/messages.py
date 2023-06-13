@@ -3,7 +3,7 @@ from commands import media
 def get_help():
     reply = "I can help you with the following commands:\n" \
             "`!help` - Displays this help message.\n" \
-            "`!content` - Lists content commands.\n" \
+            "`!media` - Lists media commands.\n" \
             "`!games` - Lists game commands.\n" \
             "`!utility` - Lists utility commands.\n" \
             "`!schedule` - Explains scheduled events.\n" \
@@ -25,9 +25,9 @@ def get_utility():
             "`!NdM` - Rolls N M-sided dice where N and M are positive integers.\n"
     return reply
 
-def get_content():
-    content_commands = "\n".join([f"`!{key}`" for key in media.get_commands()])
-    reply = f"I react to the following content commands by sending a random media file from the specified directory:\n{content_commands}"
+def get_media():
+    media_commands = "\n".join([f"`!{key}`" for key in media.get_commands()])
+    reply = f"I react to the following media commands by sending a random media file from the specified directory:\n{media_commands}"
     return reply
 
 def get_game():
