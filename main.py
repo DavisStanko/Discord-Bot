@@ -17,6 +17,7 @@ REDDIT_CLIENT_ID = os.getenv('REDDIT_CLIENT_ID')
 REDDIT_CLIENT_SECRET = os.getenv('REDDIT_CLIENT_SECRET')
 
 STARTING_POINTS = 1000
+LEADERBOARD_SIZE = 10
 
 NOUNS = "nouns.txt"
 
@@ -27,6 +28,24 @@ client = discord.Client(intents=intents)
 
 points.create_table()
 
+# Help commands
+message_commands = {
+    "help": messages.get_help,
+    "media": messages.get_media,
+    "games": messages.get_game,
+    "schedule": messages.get_schedule,
+    "info": messages.get_info,
+}
+
+# Admin commands
+admin_commands = {
+    "admin": messages.get_admin,
+    "setlocation": settings.set_location,
+    "setnewschannel": settings.set_news_channel
+}
+
+# Account commands
+account_commands = ["points", "income", "trivia", "wordscramble", "roulette", "slots"]
 
 @client.event
 async def on_ready():
@@ -63,97 +82,73 @@ async def on_ready():
 @client.event
 async def on_message(message):
     # Check if the bot has permissions to send messages, that the message is not from the bot, and that the message is a command
-    bot_has_permissions = message.channel.permissions_for(message.guild.me).send_messages
-    author_is_not_bot = message.author != client.user
-    message_is_command = message.content.startswith('!')
+    if not message.channel.permissions_for(message.guild.me).send_messages or message.author == client.user or not message.content.startswith('!'):
+        return
 
-    if bot_has_permissions and author_is_not_bot and message_is_command:
-        # Get the command
-        request = message.content[1:].lower()
+    # Format the request
+    request = message.content[1:].lower()
+    command = request.split(" ")[0]    
 
-        # Help commands
-        message_commands = {
-            "help": messages.get_help,
-            "media": messages.get_media,
-            "games": messages.get_game,
-            "schedule": messages.get_schedule,
-            "info": messages.get_info,
-        }
+    # Help commands
+    if command in message_commands:
+        command = message_commands[request]
+        await message.channel.send(command())
+    
+    # Account commands
+    elif command in admin_commands:
+        # Check if the user is an admin
+        if not message.author.guild_permissions.administrator:
+            await message.channel.send(f"{message.author.mention} You do not have permission to use that command!")
+            return
 
-        if request in message_commands:
-            command = message_commands[request]
-            await message.channel.send(command())
+        if command == "admin":
+            await message.channel.send(admin_commands[command]())
+        elif command == "setnewschannel":
+            admin_commands[command](message.guild.id, message.channel.id)
+            await message.channel.send(f"{message.author.mention} News channel set to {message.channel.mention}!")
+        elif command == "setlocation":
+            # Split the request into the command and the location
+            request = request.split(" ")
+
+            # Check if the request is valid
+            if len(request) != 3:
+                await message.channel.send(f"{message.author.mention} Invalid command! Please use the format `!setlocation [city] [country]`")
+                return
+
+            # Get the city and country
+            city = request[1]
+            country = request[2]
+
+            # Set the location
+            admin_commands[command](message.guild.id, city, country)
+            await message.channel.send(f"{message.author.mention} Location set to {city}, {country}!")
+
+    # Media commands
+    elif command in media.get_commands():
+        post, subreddit = await media.get_post(request, REDDIT_CLIENT_ID, REDDIT_CLIENT_SECRET)
+
+        # Check if the post is valid
+        if post is None:
+            await message.channel.send(f"{message.author.mention} Unable to access r/{subreddit}. Subreddit may be private.")
+        else:
+            await message.channel.send(post)
+
+    # Create an account
+    elif command == "start":
+        new_account = points.add_user(message.author.id, STARTING_POINTS)
+        # Check if the account was created
+        if not new_account:
+            await message.channel.send(f"{message.author.mention} You already have an account!")
+        else:
+            await message.channel.send(f"{message.author.mention} Your account has been created!")
+
+    # Leaderboard
+    elif command == "leaderboard":
+        leaderboard = await points.get_top_users(client, LEADERBOARD_SIZE)
+        await message.channel.send(leaderboard)
         
-        # Admin commands
-        admin_commands = {
-            "admin": messages.get_admin,
-            "setcity": settings.set_city,
-            "setcountry": settings.set_country,
-            "setnewschannel": settings.set_news_channel
-        }
-
-        if request in admin_commands:
-            command = admin_commands[request]
-
-            if request == "admin":
-                await message.channel.send(command())
-            elif request.startswith("setcity"):
-                city = request.split(" ")[1]
-                command(message.guild.id, city)
-                await message.channel.send(f"{message.author.mention} City set to {city}")
-            elif request.startswith("setcountry"):
-                country = request.split(" ")[1]
-                command(message.guild.id, country)
-                await message.channel.send(f"{message.author.mention} Country set to {country}")
-            elif request.startswith("setnewschannel"):
-                command(message.guild.id, message.channel.id)
-                await message.channel.send(f"{message.author.mention} News channel set to {message.channel.mention}")
-
-        # Media commands
-        if request in media.get_commands():
-            post, subreddit = await media.get_post(request, REDDIT_CLIENT_ID, REDDIT_CLIENT_SECRET)
-
-            # Check if the post is valid
-            if post is None:
-                await message.channel.send(f"{message.author.mention} Unable to access r/{subreddit}. Subreddit may be private.")
-            else:
-                await message.channel.send(post)
-
-        # Create an account
-        if request == "start":
-            new_account = points.add_user(message.author.id, STARTING_POINTS)
-            # Check if the account was created
-            if not new_account:
-                await message.channel.send(f"{message.author.mention} You already have an account!")
-            else:
-                await message.channel.send(f"{message.author.mention} Your account has been created!")
-
-        # Leaderboard
-        if request == "leaderboard":
-            # Get top 10 users
-            top_users, top_points = points.get_top_users(10)
-
-            # Convert user IDs to discord users
-            for i, user in enumerate(top_users):
-                discord_user = await client.fetch_user(user)
-                if discord_user:
-                    top_users[i] = discord_user.name
-                else:
-                    top_users[i] = "Unknown User"
-
-            # Combine users and points
-            top_users = [f"{top_users[i]} - {top_points[i]} points" for i in range(len(top_users))]
-
-            await message.channel.send(f"```{chr(10).join(top_users)}```")
-        
-        # Check if the request is a valid dice roll
-        if dice.is_valid_dice_format(request):
-            # Roll the dice
-            N, M, roll_history, roll = dice.roll_dice(request)
-            # Format the reply
-            reply = f"You rolled {N}d{M} and got {roll} ({roll_history})"
-            await message.channel.send(reply)
-
+    # Account commands
+    elif command in account_commands:
         # Check if the user has an account
         user_has_account = points.has_account(message.author.id)
 
@@ -161,12 +156,12 @@ async def on_message(message):
             await message.channel.send(f"{message.author.mention} You need to create an account first! Use `!start`")
         else:
             # Points
-            if request == "points":
+            if command == "points":
                 user_points = points.get_points(message.author.id)
                 await message.channel.send(f"{message.author.mention} You have {user_points} points.")
 
             # Income
-            elif request == "income":
+            elif command == "income":
                 # Get current and last income timestamp
                 current_time = int(datetime.datetime.now().timestamp())
                 last_income = points.get_last_income(message.author.id)
@@ -187,7 +182,7 @@ async def on_message(message):
                     await message.channel.send(f"{message.author.mention} You've received 100 points!")
 
             # Trivia
-            elif request == "trivia":
+            elif command == "trivia":
                 # Get trivia question and answers
                 answers, correct_answer, reply = trivia.get_random_question()
 
@@ -217,7 +212,7 @@ async def on_message(message):
                     await message.channel.send(f"Time's up! The correct answer is: {correct_answer}")
             
             # Word Scramble
-            elif request == "wordscramble":
+            elif command == "wordscramble":
                 # Open get all nouns
                 with open(NOUNS, "r") as f:
                     words = f.read().splitlines()
@@ -255,7 +250,7 @@ async def on_message(message):
                     await message.channel.send(f"Time's up! The correct answer is: {word}")
             
             # Roulette
-            elif request.startswith("roulette"):
+            elif command == "roulette":
                 # Extract wager and user choice
                 _, wager, user_choice = request.split()
                 
@@ -291,7 +286,7 @@ async def on_message(message):
                             await message.channel.send(f"{message.author.mention} You lost {wager} points!")
 
             # Slots
-            elif request.startswith("slots"):
+            elif command == "slots":
                 # Extract wager
                 _, wager = request.split()
 
@@ -319,5 +314,14 @@ async def on_message(message):
                         else:
                             points.add_points(message.author.id, -int(wager))
                             await message.channel.send(f"{message.author.mention} You lose! The wheel landed on | {wheel[0]} {wheel[1]} {wheel[2]} |")
+    
+    # Dice
+    elif dice.is_valid_dice_format(command):
+        # Roll the dice
+        N, M, roll_history, roll = dice.roll_dice(command)
+        # Format the reply
+        reply = f"You rolled {N}d{M} and got {roll} ({roll_history})"
+        await message.channel.send(reply)
+
 
 client.run(TOKEN)

@@ -1,5 +1,6 @@
 import os
 import csv
+import discord
 
 FILENAME = 'databases/points.csv'
 
@@ -86,7 +87,7 @@ def set_last_income(userID, timestamp):
                 row[3] = str(timestamp)  # Convert back to string for writing to CSV
             writer.writerow(row)
 
-def get_top_users(number):
+async def get_top_users(client, number):
     # Load all rows from the CSV file
     with open(FILENAME, 'r') as file:
         reader = csv.reader(file)
@@ -108,5 +109,31 @@ def get_top_users(number):
         for row in top_rows:
             top_points.append(int(row[2]))
 
-        # return
-        return top_users, top_points
+        # Convert discord IDs to discord users
+        for i, user in enumerate(top_users):    
+            discord_user = await client.fetch_user(user)
+            if discord_user:
+                top_users[i] = discord_user.name
+            else:
+                top_users[i] = "Unknown User"
+        
+        # Format the output
+        output = ''
+        for i in range(len(top_users)):
+            output += f'{i+1}. {top_users[i]} - {top_points[i]} points\n'
+
+        return output
+    
+
+    # # Convert user IDs to discord users
+    #     for i, user in enumerate(top_users):
+    #         discord_user = await client.fetch_user(user)
+    #         if discord_user:
+    #             top_users[i] = discord_user.name
+    #         else:
+    #             top_users[i] = "Unknown User"
+
+    #     # Combine users and points
+    #     top_users = [f"{top_users[i]} - {top_points[i]} points" for i in range(len(top_users))]
+
+    #     await message.channel.send(f"```{chr(10).join(top_users)}```")

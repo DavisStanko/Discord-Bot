@@ -13,8 +13,7 @@ def get_help():
 
 def get_admin():
     reply = "I react to the following admin commands:\n" \
-            "`!setcity [city]` - Sets the city for the server.\n" \
-            "`!setcountry [country]` - Sets the country for the server.\n" \
+            "`!setlocation [city] [country code]` - (e.g. `!setlocation Toronto CA`) - Sets the location for the server.\n" \
             "`!setnewschannel` - Sets the channel for news reports to the current channel.\n"
     
     return reply
