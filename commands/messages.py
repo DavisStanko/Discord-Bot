@@ -5,7 +5,7 @@ def get_help():
             "`!help` - Displays this help message.\n" \
             "`!media` - Lists media commands.\n" \
             "`!games` - Lists game commands.\n" \
-            "`!utility` - Lists utility commands.\n" \
+            "`!info` - Links to my GitHub page.\n" \
             "`!schedule` - Explains scheduled events.\n" \
             "`!admin` - Lists admin commands.\n"
             
@@ -17,12 +17,6 @@ def get_admin():
             "`!setcountry [country]` - Sets the country for the server.\n" \
             "`!setnewschannel` - Sets the channel for news reports to the current channel.\n"
     
-    return reply
-
-def get_utility():
-    reply = "I react to the following utility commands:\n" \
-            "`!info` - Links to my GitHub page.\n" \
-            "`!NdM` - Rolls N M-sided dice where N and M are positive integers.\n"
     return reply
 
 def get_media():
@@ -39,7 +33,8 @@ def get_game():
             "`!trivia` - Start a game of trivia. Correct answers give you 10 points.\n" \
             "`!wordscramble` - Start a game of word scramble. Correct answers give you 10 points per letter.\n" \
             "`!roulette [wager] [red|black|green]` - Play a game of roulette.\n" \
-            "`!slots [wager]` - Play a game of slots.\n"
+            "`!slots [wager]` - Play a game of slots.\n" \
+            "`!NdM` - Rolls N M-sided dice where N and M are positive integers.\n"
     return reply
 
 def get_info():

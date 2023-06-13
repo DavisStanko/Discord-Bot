@@ -34,6 +34,7 @@ async def on_ready():
     guilds = client.guilds
 
     # Print guild names with IDs
+    print(f"{client.user} is connected to:")
     for guild in guilds:
         print(f"{guild.name} ({guild.id})")
 
@@ -50,9 +51,8 @@ async def on_ready():
             news_channel = settings.get_news_channel(guild.id)
 
             if news_channel is not None:
-                # Get the weather data
+                # Get the weather and news data
                 weather_data = weather.main(guild.id, WEATHER_API_KEY)
-                # Get the news data
                 news_data = news.main(guild.id, NEWS_API_KEY)
                 # Convert the news channel ID to an object
                 news_channel_obj = client.get_channel(int(news_channel))
@@ -74,7 +74,6 @@ async def on_message(message):
         # Help commands
         message_commands = {
             "help": messages.get_help,
-            "utility": messages.get_utility,
             "media": messages.get_media,
             "games": messages.get_game,
             "schedule": messages.get_schedule,
@@ -85,6 +84,7 @@ async def on_message(message):
             command = message_commands[request]
             await message.channel.send(command())
         
+        # Admin commands
         admin_commands = {
             "admin": messages.get_admin,
             "setcity": settings.set_city,
