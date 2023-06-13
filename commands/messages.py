@@ -50,3 +50,4 @@ def get_info():
 def get_schedule():
     reply = f"Every 6 hours I will send the current weather and top 3 news articles for the locations specified by the server owner.\n" \
             "If you are the admin and would like to set your location, please reply with `!admin`."
+    return reply
