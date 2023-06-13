@@ -25,7 +25,6 @@ def get_news_channel(guild):
     with open(FILENAME, "r") as f:
         reader = csv.reader(f)
         for row in reader:
-            print(f"{row[1]} == {str(guild)}")
             if row[1] == str(guild):
                 return row[4]
     return None
