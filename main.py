@@ -257,33 +257,33 @@ async def on_message(message):
                 # Check that the wager is an integer
                 if not wager.isdigit():
                     await message.channel.send(f"{message.author.mention} Invalid wager.")
-                
-                wager = int(wager)
-                user_points = points.get_points(message.author.id)
-
-                # Check that the user has enough points
-                if wager > user_points:
-                    await message.channel.send(f"{message.author.mention} You don't have enough points!")
                 else:
-                    # Define roulette options
-                    options = ["red", "black", "green"]
+                    wager = int(wager)
+                    user_points = points.get_points(message.author.id)
 
-                    # Check if the user's choice is valid
-                    if user_choice not in options:
-                        await message.channel.send(f"{message.author.mention} Invalid choice.")
+                    # Check that the user has enough points
+                    if wager > user_points:
+                        await message.channel.send(f"{message.author.mention} You don't have enough points!")
                     else:
-                        # Spin the wheel
-                        wheel = random.choices(options, weights=[18, 18, 2], k=1)[0]
+                        # Define roulette options
+                        options = ["red", "black", "green"]
 
-                        # Check if the user won
-                        if user_choice == wheel:
-                            # Calculate winnings and add to user's points
-                            winnings = wager * 14 if wheel == "green" else wager
-                            points.add_points(message.author.id, winnings)
-                            await message.channel.send(f"{message.author.mention} You won {winnings} points!")
+                        # Check if the user's choice is valid
+                        if user_choice not in options:
+                            await message.channel.send(f"{message.author.mention} Invalid choice.")
                         else:
-                            points.add_points(message.author.id, -wager)
-                            await message.channel.send(f"{message.author.mention} You lost {wager} points!")
+                            # Spin the wheel
+                            wheel = random.choices(options, weights=[18, 18, 2], k=1)[0]
+
+                            # Check if the user won
+                            if user_choice == wheel:
+                                # Calculate winnings and add to user's points
+                                winnings = wager * 14 if wheel == "green" else wager
+                                points.add_points(message.author.id, winnings)
+                                await message.channel.send(f"{message.author.mention} You won {winnings} points!")
+                            else:
+                                points.add_points(message.author.id, -wager)
+                                await message.channel.send(f"{message.author.mention} You lost {wager} points!")
 
             # Slots
             elif command == "slots":
