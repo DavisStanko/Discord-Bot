@@ -1,4 +1,4 @@
-# Discord-Bot
+# robot
 
 This Discord bot is no longer hosted or maintained. It was created as a fun project to learn Python but has since been replaced by a more robust bot written in JavaScript [DavisStanko/botterfly](https://github.com/DavisStanko/botterfly). This bot is still functional and can be used as a template for other Discord bots.
 
