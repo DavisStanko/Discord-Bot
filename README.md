@@ -1,6 +1,6 @@
 # Discord-Bot
 
-My instance of this bot is currently hosted on a VPS with a low bandwidth cap and as such it is only availible for private use. Please contact me if you are interested in trying this bot in your server. Feel free, to fork this program for your own bot instance instead.
+This Discord bot is no longer hosted or maintained. It was created as a fun project to learn Python but has since been replaced by a more robust bot written in JavaScript [DavisStanko/botterfly](https://github.com/DavisStanko/botterfly). This bot is still functional and can be used as a template for other Discord bots.
 
 ## Usage
 
@@ -18,7 +18,7 @@ Commands are all prefixed with `!`. The bot will ignore any messages that do not
 
 `!utility` is replied to with a list of all the available utility commands. These commands are used to perform various tasks. For example, `!weather [location] [info|now|hour (0-47)|day (0-7)]` will send weather information for the specified location and time. The bot will then reply with the requested information.
 
-### Scheduled ACtions
+### Scheduled Actions
 
 `!schedule` is replied to with a list of all of the bot's scheduled actions. When configured the weather and news for the locations set by the admin will be sent to a channel set by the admin.
 
